@@ -87,7 +87,7 @@ class OpenAIResponseSensor(SensorEntity):
                 0,
                 0
             )
-            self._response_text = response["choices"][0]["text"]
+            self._response_text = response["choices"][0]["message"]["content"]
             self._history.append({"role": "assistant", "content": self._response_text})
             self._state = "response_received"
             self.async_write_ha_state()
