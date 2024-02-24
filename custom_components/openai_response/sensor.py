@@ -62,16 +62,16 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
         True
     )
 
-def generate_openai_response_sync(client, **kwargs):
+def generate_openai_response_sync(client, model, prompt, temperature, max_tokens, top_p, frequency_penalty, presence_penalty):
     """Setup and return the chat completion."""
     return client.chat.completions.create(
-        model=kwargs.get("model"),
-        messages=kwargs.get("prompt"),
-        temperature=kwargs.get("temperature"),
-        max_tokens=kwargs.get("max_tokens"),
-        top_p=kwargs.get("top_p"),
-        frequency_penalty=kwargs.get("frequency_penalty"),
-        presence_penalty=kwargs.get("presence_penalty")
+        model=model,
+        messages=prompt,
+        temperature=temperature,
+        max_tokens=max_tokens,
+        top_p=top_p,
+        frequency_penalty=frequency_penalty,
+        presence_penalty=presence_penalty
     )
 
 class OpenAIResponseSensor(SensorEntity):
@@ -135,20 +135,16 @@ class OpenAIResponseSensor(SensorEntity):
             if not self._keep_history:
                 self.clear_history()
             self._history.append(prompt)
-            response_config = {
-                "model": self._model,
-                "prompt": self._history,
-                "temperature": self._temperature,
-                "max_tokens": self._max_tokens,
-                "top_p": 1,
-                "frequency_penalty": 0,
-                "presence_penalty": 0
-            }
-
             response = await self._hass.async_add_executor_job(
                 generate_openai_response_sync,
                 self._client,
-                **response_config
+                self._model,
+                self._history,
+                self._temperature,
+                self._max_tokens,
+                1,
+                0,
+                0
             )
             self._response_text = response.choices[0].message.content
             _LOGGER.info(self._response_text)
