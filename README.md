@@ -18,13 +18,16 @@ Head to **[This Link](https://platform.openai.com/account/api-keys)** to get you
 
 
 ## Installation
+
+These instructions assume that you already have a working installation of the [HACS](https://hacs.xyz/) (Home Assistant Community Store) in your home assistant setup.
+
 ### Step 1
 
 #### Manual
 
 Copy the `openai_response` folder to your Home Assistant's custom_components directory. If you don't have a `custom_components` directory, create one in the same directory as your `configuration.yaml` file.
 
-#### HACS
+#### Automated (HACS)
 
 Add this repository to HACS. https://github.com/Hassassistant/openai_response
 
