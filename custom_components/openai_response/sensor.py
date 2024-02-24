@@ -2,7 +2,7 @@ from openai import OpenAI
 import voluptuous as vol
 from homeassistant.components.sensor import PLATFORM_SCHEMA, SensorEntity
 from homeassistant.const import CONF_API_KEY, CONF_NAME, CONF_HOST, CONF_PORT
-from const import CONF_PERSONA
+from .const import CONF_PERSONA
 import homeassistant.helpers.config_validation as cv
 from homeassistant.core import callback
 
