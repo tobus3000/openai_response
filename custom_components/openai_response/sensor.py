@@ -3,7 +3,7 @@ from openai import OpenAI
 import voluptuous as vol
 from homeassistant.components.sensor import PLATFORM_SCHEMA, SensorEntity
 from homeassistant.const import CONF_API_KEY, CONF_NAME, CONF_HOST, CONF_PORT
-from .const import CONF_PERSONA
+from .const import CONF_PERSONA, CONF_KEEPHISTORY
 import homeassistant.helpers.config_validation as cv
 from homeassistant.core import callback
 
@@ -19,6 +19,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
         vol.Optional(CONF_HOST): cv.string,
         vol.Optional(CONF_PORT): cv.string,
         vol.Optional(CONF_PERSONA): cv.string,
+        vol.Optional(CONF_KEEPHISTORY, default=False): cv.boolean,
         vol.Optional(CONF_MODEL, default=DEFAULT_MODEL): cv.string,
     }
 )
@@ -30,9 +31,10 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     host = config[CONF_HOST]
     port = config[CONF_PORT]
     persona = config[CONF_PERSONA]
+    keep_history = config[CONF_KEEPHISTORY]
     api_base = f"http://{host}:{port}/v1"
     client = OpenAI(base_url=api_base, api_key=api_key)
-    async_add_entities([OpenAIResponseSensor(hass, name, client, model, persona)], True)
+    async_add_entities([OpenAIResponseSensor(hass, name, client, keep_history, model, persona)], True)
 
 def generate_openai_response_sync(client, model, prompt, temperature, max_tokens, top_p, frequency_penalty, presence_penalty):
     return client.chat.completions.create(
@@ -46,7 +48,7 @@ def generate_openai_response_sync(client, model, prompt, temperature, max_tokens
     )
 
 class OpenAIResponseSensor(SensorEntity):
-    def __init__(self, hass, name, client, model, persona):
+    def __init__(self, hass, name, client, keep_history, model, persona):
         self._hass = hass
         self._name = name
         self._client = client
@@ -55,6 +57,7 @@ class OpenAIResponseSensor(SensorEntity):
         self._state = None
         self._response_text = ""
         self._available = True
+        self._keep_history = keep_history
         self._history = [
             {
                 "role": "system",
@@ -98,7 +101,8 @@ class OpenAIResponseSensor(SensorEntity):
             _LOGGER.info(self._response_text)
             self._state = "response_received"
             self.async_write_ha_state()
-            self._history.append({"role": "assistant", "content": self._response_text})
+            if self._keep_history:
+                self._history.append({"role": "assistant", "content": self._response_text})
 
     async def async_added_to_hass(self):
         self.async_on_remove(
