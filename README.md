@@ -24,14 +24,33 @@ Head to **[This Link](https://platform.openai.com/account/api-keys)** to get you
 
 **2.** Add the following lines to your Home Assistant **configuration.yaml** file:
 
+### Example for OpenAPI
+
 ```yaml
 sensor:
   - platform: openai_response
-    api_key: YOUR_OPENAI_API_KEY
+    api_key: YOUR_OPENAI_API_KEY # Optional but must be set when connecting to OpenAPI!
     model: "text-davinci-003" # Optional, defaults to "text-davinci-003"
     name: "hassio_openai_response" # Optional, defaults to "hassio_openai_response"
+    persona: "You are a helpful assistant. Your answers are complete but short." # Optional, defaults to the text in this example.
+    keep_history: false # Optional, defaults to False
+    temperature: 0.5 # Optional, defaults to 0.9
+    max_tokens: 300 # Optional, defaults to 300
 ```
 Replace **YOUR_OPENAI_API_KEY** with your actual OpenAI API key.
+
+### Example for a custom LLM setup
+
+```yaml
+sensor:
+  - platform: openai_response  
+    api_base: http://localhost:1234/v1 # Optional. To talk to your local LLM instead of OpenAPI.
+    name: "hassio_openai_response" # Optional, defaults to "hassio_openai_response"
+    persona: "You are a helpful assistant. Your answers are complete but short." # Optional, defaults to the text in this example.
+    keep_history: false # Optional, defaults to False
+    temperature: 0.5 # Optional, defaults to 0.9
+    max_tokens: 300 # Optional, defaults to 300
+```
 
 **3.** Restart Home Assistant.
 

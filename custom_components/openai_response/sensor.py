@@ -18,18 +18,20 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.core import callback
 
 _LOGGER = logging.getLogger(__name__)
+DEFAULT_API_KEY = None
 DEFAULT_NAME = "hassio_openai_response"
 DEFAULT_MODEL = "text-davinci-003"
+DEFAULT_PERSONA = "You are a helpful assistant. Your answers are complete but short."
 DEFAULT_KEEP_HISTORY = False
 DEFAULT_TEMPERATURE = 0.9
 DEFAULT_MAX_TOKENS = 300
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     {
-        vol.Required(CONF_API_KEY): cv.string,
+        vol.Optional(CONF_API_KEY, default=DEFAULT_API_KEY): cv.string,
         vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
         vol.Optional(CONF_API_BASE): cv.string,
-        vol.Optional(CONF_PERSONA): cv.string,
+        vol.Optional(CONF_PERSONA, default=DEFAULT_PERSONA): cv.string,
         vol.Optional(CONF_KEEPHISTORY, default=DEFAULT_KEEP_HISTORY): cv.boolean,
         vol.Optional(CONF_TEMPERATURE, default=DEFAULT_TEMPERATURE): cv.positive_float,
         vol.Optional(CONF_MAX_TOKENS, default=DEFAULT_MAX_TOKENS): cv.positive_int,
@@ -43,8 +45,10 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     api_key = config[CONF_API_KEY]
     if api_base:
         client = OpenAI(base_url=api_base, api_key=api_key)
-    else:
+    elif api_key:
         client = OpenAI()
+    else:
+        _LOGGER.error("You must either set an 'api_key' or the 'api_base' for the openai_response sensor.")
 
     sensor_config = {
         "hass": hass,
