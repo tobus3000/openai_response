@@ -92,10 +92,22 @@ class OpenAIResponseSensor(SensorEntity):
     def extra_state_attributes(self)  -> dict:
         return {"response_text": self._response_text}
 
+    def clear_history(self) -> None:
+        self._history = [
+            {
+                "role": "system",
+                "content": self._persona
+            }
+        ]
+
     async def async_generate_openai_response(self, entity_id, old_state, new_state):
         new_text = new_state.state
         if new_text:
-            self._history.append({"role": "user", "content": new_text})
+            prompt = {"role": "user", "content": new_text}
+            # Wipe history if keep_history is False.
+            if not self._keep_history:
+                self.clear_history()
+            self._history.append(prompt)
             response = await self._hass.async_add_executor_job(
                 generate_openai_response_sync,
                 self._client,
