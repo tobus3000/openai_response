@@ -1,4 +1,4 @@
-import openai
+from openai import OpenAI
 import voluptuous as vol
 from homeassistant.components.sensor import PLATFORM_SCHEMA, SensorEntity
 from homeassistant.const import CONF_API_KEY, CONF_NAME, CONF_HOST, CONF_PORT
@@ -26,15 +26,15 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     model = config[CONF_MODEL]
     host = config[CONF_HOST]
     port = config[CONF_PORT]
-    openai.api_base = f"http://{host}:{port}/v1"
-    openai.api_key = api_key
+    api_base = f"http://{host}:{port}/v1"
+    client = OpenAI(base_url=api_base, api_key=api_key)
 
-    async_add_entities([OpenAIResponseSensor(hass, name, host, port, model)], True)
+    async_add_entities([OpenAIResponseSensor(hass, name, client, model)], True)
 
 
-def generate_openai_response_sync(model, prompt, temperature, max_tokens, top_p, frequency_penalty, presence_penalty):
+def generate_openai_response_sync(client, model, prompt, temperature, max_tokens, top_p, frequency_penalty, presence_penalty):
 #    return openai.Completion.create(
-    return openai.chat.completions.create(
+    return client.chat.completions.create(
         model=model,
         messages=prompt,
         temperature=temperature,
@@ -46,15 +46,19 @@ def generate_openai_response_sync(model, prompt, temperature, max_tokens, top_p,
 
 
 class OpenAIResponseSensor(SensorEntity):
-    def __init__(self, hass, name, host, port, model):
+    def __init__(self, hass, name, client, model):
         self._hass = hass
         self._name = name
-        self._host = host
-        self._port = port
+        self._client = client
         self._model = model
         self._state = None
         self._response_text = ""
-        self._history = [{"role": "system", "content": "Du beantwortest alle Fragen auf Deutsch. Deine Antworten sind kurz und exakt."}]
+        self._history = [
+            {
+                "role": "system",
+                "content": "Du beantwortest alle Fragen auf Deutsch. Deine Antworten sind kurz und exakt."
+            }
+        ]
 
     @property
     def name(self):
@@ -74,6 +78,7 @@ class OpenAIResponseSensor(SensorEntity):
             self._history.append({"role": "assistant", "content": new_text})
             response = await self._hass.async_add_executor_job(
                 generate_openai_response_sync,
+                self._client,
                 self._model,
                 self._history,
                 0.9,
