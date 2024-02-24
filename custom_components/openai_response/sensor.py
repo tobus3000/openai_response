@@ -25,16 +25,26 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
 )
 
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
-    api_key = config[CONF_API_KEY]
-    name = config[CONF_NAME]
-    model = config[CONF_MODEL]
+    
     host = config[CONF_HOST]
     port = config[CONF_PORT]
-    persona = config[CONF_PERSONA]
-    keep_history = config[CONF_KEEPHISTORY]
     api_base = f"http://{host}:{port}/v1"
+    api_key = config[CONF_API_KEY]
     client = OpenAI(base_url=api_base, api_key=api_key)
-    async_add_entities([OpenAIResponseSensor(hass, name, client, keep_history, model, persona)], True)
+
+    sensor_config = {
+        "hass": hass,
+        "name": config[CONF_NAME],
+        "client": client,
+        "keep_history": config[CONF_KEEPHISTORY],
+        "model": config[CONF_MODEL],
+        "persona": config[CONF_PERSONA]
+    }
+
+    async_add_entities(
+        [OpenAIResponseSensor(**sensor_config)],
+        True
+    )
 
 def generate_openai_response_sync(client, model, prompt, temperature, max_tokens, top_p, frequency_penalty, presence_penalty):
     return client.chat.completions.create(
@@ -48,16 +58,16 @@ def generate_openai_response_sync(client, model, prompt, temperature, max_tokens
     )
 
 class OpenAIResponseSensor(SensorEntity):
-    def __init__(self, hass, name, client, keep_history, model, persona):
-        self._hass = hass
-        self._name = name
-        self._client = client
-        self._model = model
-        self._persona = persona
+    def __init__(self, **kwargs):
+        self._hass = kwargs.get("hass")
+        self._name = kwargs.get("name")
+        self._client = kwargs.get("client")
+        self._model = kwargs.get("model")
+        self._persona = kwargs.get("persona")
+        self._keep_history = kwargs.get("keep_history")
         self._state = None
         self._response_text = ""
         self._available = True
-        self._keep_history = keep_history
         self._history = [
             {
                 "role": "system",
