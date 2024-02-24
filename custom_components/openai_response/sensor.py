@@ -29,8 +29,6 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     host = config[CONF_HOST]
     port = config[CONF_PORT]
     persona = config[CONF_PERSONA]
-    if not persona:
-        persona = "You are a helpful assistant. You keep your answers short."
     api_base = f"http://{host}:{port}/v1"
     client = OpenAI(base_url=api_base, api_key=api_key)
     async_add_entities([OpenAIResponseSensor(hass, name, client, model, persona)], True)

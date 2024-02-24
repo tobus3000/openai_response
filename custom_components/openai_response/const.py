@@ -1,1 +1,1 @@
-CONF_PERSONA = "You are a helpful assistant. You keep your answers short."
+CONF_PERSONA = "persona"
