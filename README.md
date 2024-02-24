@@ -18,17 +18,19 @@ Head to **[This Link](https://platform.openai.com/account/api-keys)** to get you
 
 
 ## Installation
-**1.** 
+### Step 1
 
-### Manual
+#### Manual
 
 Copy the `openai_response` folder to your Home Assistant's custom_components directory. If you don't have a `custom_components` directory, create one in the same directory as your `configuration.yaml` file.
 
-### HACS
+#### HACS
 
 Add this repository to HACS. https://github.com/Hassassistant/openai_response
 
-**2.** Add the following lines to your Home Assistant `configuration.yaml` file:
+### Step 2
+
+Add the following lines to your Home Assistant `configuration.yaml` file:
 
 ### Example for OpenAPI
 
@@ -58,7 +60,9 @@ sensor:
     max_tokens: 300 # Optional, defaults to 300
 ```
 
-**3.** Restart Home Assistant.
+### Step 3
+Restart Home Assistant.  
+> You can click the **Repair** button in the Homeassistant Settings to restart.
 
 ## Usage
 Create an **input_text.gpt_input** entity in Home Assistant to serve as the input for the GPT-3 model.  
