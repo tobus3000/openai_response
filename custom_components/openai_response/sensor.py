@@ -29,7 +29,7 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     openai.api_base = f"http://{host}:{port}/v1"
     openai.api_key = api_key
 
-    async_add_entities([OpenAIResponseSensor(hass, name, model)], True)
+    async_add_entities([OpenAIResponseSensor(hass, name, host, port, model)], True)
 
 
 def generate_openai_response_sync(model, prompt, temperature, max_tokens, top_p, frequency_penalty, presence_penalty):
