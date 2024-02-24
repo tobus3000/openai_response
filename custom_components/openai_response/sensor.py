@@ -1,7 +1,7 @@
 from openai import OpenAI
 import voluptuous as vol
 from homeassistant.components.sensor import PLATFORM_SCHEMA, SensorEntity
-from homeassistant.const import CONF_API_KEY, CONF_NAME, CONF_HOST, CONF_PORT
+from homeassistant.const import CONF_API_KEY, CONF_NAME, CONF_HOST, CONF_PORT, CONF_PERSONA
 import homeassistant.helpers.config_validation as cv
 from homeassistant.core import callback
 
@@ -16,6 +16,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
         vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
         vol.Optional(CONF_HOST): cv.string,
         vol.Optional(CONF_PORT): cv.string,
+        vol.Optional(CONF_PERSONA): cv.string,
         vol.Optional(CONF_MODEL, default=DEFAULT_MODEL): cv.string,
     }
 )
@@ -26,14 +27,14 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     model = config[CONF_MODEL]
     host = config[CONF_HOST]
     port = config[CONF_PORT]
+    persona = config[CONF_PERSONA]
+    if not persona:
+        persona = "You are a helpful assistant. You keep your answers short."
     api_base = f"http://{host}:{port}/v1"
     client = OpenAI(base_url=api_base, api_key=api_key)
-
-    async_add_entities([OpenAIResponseSensor(hass, name, client, model)], True)
-
+    async_add_entities([OpenAIResponseSensor(hass, name, client, model, persona)], True)
 
 def generate_openai_response_sync(client, model, prompt, temperature, max_tokens, top_p, frequency_penalty, presence_penalty):
-#    return openai.Completion.create(
     return client.chat.completions.create(
         model=model,
         messages=prompt,
@@ -44,19 +45,19 @@ def generate_openai_response_sync(client, model, prompt, temperature, max_tokens
         presence_penalty=presence_penalty
     )
 
-
 class OpenAIResponseSensor(SensorEntity):
-    def __init__(self, hass, name, client, model):
+    def __init__(self, hass, name, client, model, persona):
         self._hass = hass
         self._name = name
         self._client = client
         self._model = model
+        self._persona = persona
         self._state = None
         self._response_text = ""
         self._history = [
             {
                 "role": "system",
-                "content": "Du beantwortest alle Fragen auf Deutsch. Deine Antworten sind kurz und exakt."
+                "content": self._persona
             }
         ]
 
@@ -75,14 +76,14 @@ class OpenAIResponseSensor(SensorEntity):
     async def async_generate_openai_response(self, entity_id, old_state, new_state):
         new_text = new_state.state
         if new_text:
-            self._history.append({"role": "assistant", "content": new_text})
+            self._history.append({"role": "user", "content": new_text})
             response = await self._hass.async_add_executor_job(
                 generate_openai_response_sync,
                 self._client,
                 self._model,
                 self._history,
                 0.9,
-                964,
+                300,
                 1,
                 0,
                 0
