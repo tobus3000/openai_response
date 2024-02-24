@@ -7,9 +7,10 @@
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/custom-components/hacs)
 
-This custom component for Home Assistant allows you to generate text responses using OpenAI's GPT-3 model.
+This custom component for Home Assistant allows you to generate text responses using OpenAI's GPT-3 model or a locally managed LLM.
 
-Head to **[This Link](https://platform.openai.com/account/api-keys)** to get you API key from OpenAI. 
+Head to **[This Link](https://platform.openai.com/account/api-keys)** to get you API key from OpenAI.  
+> **Note:** This step is only required if you don't run your own local language model.
 
 <img src="https://raw.githubusercontent.com/Hassassistant/openai_response/main/misc/Capture1.jpg"
      width="80%" />
@@ -18,11 +19,16 @@ Head to **[This Link](https://platform.openai.com/account/api-keys)** to get you
 
 ## Installation
 **1.** 
-**(Manual)** Copy the **openai_response** folder to your Home Assistant's custom_components directory. If you don't have a **custom_components** directory, create one in the same directory as your **configuration.yaml** file.
 
-**(HACS)** Add this repository to HACS. https://github.com/Hassassistant/openai_response
+### Manual
 
-**2.** Add the following lines to your Home Assistant **configuration.yaml** file:
+Copy the `openai_response` folder to your Home Assistant's custom_components directory. If you don't have a `custom_components` directory, create one in the same directory as your `configuration.yaml` file.
+
+### HACS
+
+Add this repository to HACS. https://github.com/Hassassistant/openai_response
+
+**2.** Add the following lines to your Home Assistant `configuration.yaml` file:
 
 ### Example for OpenAPI
 
@@ -55,7 +61,8 @@ sensor:
 **3.** Restart Home Assistant.
 
 ## Usage
-Create an **input_text.gpt_input** entity in Home Assistant to serve as the input for the GPT-3 model. Add the following lines to your configuration.yaml file:
+Create an **input_text.gpt_input** entity in Home Assistant to serve as the input for the GPT-3 model.  
+Add the following lines to your `configuration.yaml` file:
 
 ```yaml
 input_text:
@@ -69,7 +76,7 @@ If you are creating via YAML, you will need to restart again to activate the new
 To generate a response from GPT-3, update the **input_text.gpt_input** entity with the text you want to send to the model. The generated response will be available as an attribute of the **sensor.hassio_openai_response** entity.
 
 ## Example
-To display the GPT-3 input and response in your Home Assistant frontend, add the following to your **ui-lovelace.yaml** file or create a card in the Lovelace UI:
+To display the GPT-3 input and response in your Home Assistant frontend, add the following to your `ui-lovelace.yaml` file or create a card in the Lovelace UI:
 
 ```yaml
 type: grid
