@@ -19,6 +19,7 @@ from homeassistant.core import callback
 
 _LOGGER = logging.getLogger(__name__)
 DEFAULT_API_KEY = "no-key"
+DEFAULT_API_BASE = ""
 DEFAULT_NAME = "hassio_openai_response"
 DEFAULT_MODEL = "text-davinci-003"
 DEFAULT_PERSONA = "You are a helpful assistant. Your answers are complete but short."
@@ -30,7 +31,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     {
         vol.Optional(CONF_API_KEY, default=DEFAULT_API_KEY): cv.string,
         vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
-        vol.Optional(CONF_API_BASE): cv.string,
+        vol.Optional(CONF_API_BASE, default=DEFAULT_API_BASE): cv.string,
         vol.Optional(CONF_PERSONA, default=DEFAULT_PERSONA): cv.string,
         vol.Optional(CONF_KEEPHISTORY, default=DEFAULT_KEEP_HISTORY): cv.boolean,
         vol.Optional(CONF_TEMPERATURE, default=DEFAULT_TEMPERATURE): cv.positive_float,
@@ -43,7 +44,7 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     """Setup basic OpenAI session."""
     api_base = config.get(CONF_API_BASE)
     api_key = config[CONF_API_KEY]
-    if api_base:
+    if api_base != "":
         client = OpenAI(base_url=api_base, api_key=api_key)
     elif api_key != "no-key":
         client = OpenAI()
