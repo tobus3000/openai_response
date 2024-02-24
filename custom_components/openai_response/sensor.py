@@ -1,3 +1,4 @@
+import logging
 from openai import OpenAI
 import voluptuous as vol
 from homeassistant.components.sensor import PLATFORM_SCHEMA, SensorEntity
@@ -6,7 +7,7 @@ from .const import CONF_PERSONA
 import homeassistant.helpers.config_validation as cv
 from homeassistant.core import callback
 
-
+_LOGGER = logging.getLogger(__name__)
 CONF_MODEL = "model"
 DEFAULT_NAME = "hassio_openai_response"
 DEFAULT_MODEL = "text-davinci-003"
@@ -53,6 +54,7 @@ class OpenAIResponseSensor(SensorEntity):
         self._persona = persona
         self._state = None
         self._response_text = ""
+        self._available = True
         self._history = [
             {
                 "role": "system",
@@ -61,15 +63,20 @@ class OpenAIResponseSensor(SensorEntity):
         ]
 
     @property
-    def name(self):
+    def name(self) -> str:
         return self._name
 
     @property
-    def state(self):
+    def available(self) -> bool:
+        """Return True if entity is available."""
+        return self._available
+    
+    @property
+    def state(self) -> str | None:
         return self._state
 
     @property
-    def extra_state_attributes(self):
+    def extra_state_attributes(self)  -> dict:
         return {"response_text": self._response_text}
 
     async def async_generate_openai_response(self, entity_id, old_state, new_state):
@@ -88,9 +95,10 @@ class OpenAIResponseSensor(SensorEntity):
                 0
             )
             self._response_text = response["choices"][0]["message"]["content"]
-            self._history.append({"role": "assistant", "content": self._response_text})
+            _LOGGER.info(self._response_text)
             self._state = "response_received"
             self.async_write_ha_state()
+            self._history.append({"role": "assistant", "content": self._response_text})
 
     async def async_added_to_hass(self):
         self.async_on_remove(
