@@ -4,7 +4,7 @@ from typing import Any, Dict, Optional
 from homeassistant import config_entries, core
 from homeassistant.const import CONF_ACCESS_TOKEN, CONF_NAME, CONF_PATH, CONF_URL
 from homeassistant.core import callback
-from homeassistant.helpers.aiohttp_client import async_get_clientsession
+#from homeassistant.helpers.aiohttp_client import async_get_clientsession
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.entity_registry import (
     async_entries_for_config_entry,
@@ -27,7 +27,7 @@ class EndpointSelectionConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
     MINOR_VERSION = 1
 
-    async def async_step_init(self, user_input=None):
+    async def async_step_user(self, user_input: Optional[Dict[str, Any]] = None):
         if user_input is not None:
             self.data['endpoint_type'] = user_input
             _LOGGER.info(f"init - user_input: {user_input}")
