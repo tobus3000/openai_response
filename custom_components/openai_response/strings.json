@@ -1,0 +1,24 @@
+{
+    "title": "OpenAPI Response Sensor",
+    "config": {
+        "step": {
+            "endpoint_selection": {
+                "title": "Select Endpoint",
+                "description": "Choose between the OpenAPI or a custom LLM endpoint.",
+                "menu_options": {
+                    "openapi": "OpenAPI",
+                    "other_llm": "Custom LLM"
+                }
+            },
+            "openapi": {
+                "title": "Setup OpenAPI Endpoint",
+                "description": "This step requires you to provide an API Key that you have setup on the OpenAPI website."
+
+            },
+            "custom_llm": {
+                "title": "Setup a custom LLM Endpoint",
+                "description": "Provide the details to your custom LLM endpoints."
+            }
+        }
+    }
+}

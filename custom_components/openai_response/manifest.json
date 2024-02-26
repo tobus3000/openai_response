@@ -4,8 +4,9 @@
     "documentation": "https://github.com/Hassassistant/openai_response",
     "dependencies": [],
     "codeowners": ["@hassassistant"],
-    "requirements": ["openai==1.12.0"],
+    "requirements": ["openai>=1.12.0"],
     "extra_quality_scale": "platinum",
-    "version": "0.1.1"
+    "version": "0.1.1",
+    "config_flow": true
 }
 

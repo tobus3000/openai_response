@@ -1,6 +1,7 @@
-"""
-Custom config parameters for this component (use in sensor.yaml).
-"""
+"""Our domain (namespace) for storing config data in home assistant."""
+DOMAIN = "openapi_response"
+
+"""Custom config parameters for this component (use in sensor.yaml)."""
 CONF_API_BASE = "api_base"
 CONF_MODEL = "model"
 CONF_PERSONA = "persona"
