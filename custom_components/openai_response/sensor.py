@@ -46,7 +46,7 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     api_key = config[CONF_API_KEY]
     if api_base != "":
         client = OpenAI(base_url=api_base, api_key=api_key)
-    elif api_key != "no-key":
+    elif api_key != "nokey":
         client = OpenAI(api_key=api_key)
     else:
         _LOGGER.error("You must either set an 'api_key' or the 'api_base' for the openai_response sensor.")
