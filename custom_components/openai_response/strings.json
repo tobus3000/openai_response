@@ -6,17 +6,25 @@
             "custom_llm_auth": "The custom LLM base URL is invalid."
         },
         "step": {
-            "endpoint_selection": {
-                "title": "Select Endpoint",
+            "user": {
+                "title": "Setup Endpoint",
                 "description": "Choose between the OpenAI or a custom LLM endpoint.",
-                "menu_options": {
-                    "openai": "OpenAI",
-                    "other_llm": "Custom LLM"
+                "data": {
+                    "name": "Name of your OpenAI Response Sensor",
+                    "api_key": "OpenAI API key",
+                    "url": "The base URL to your custom LLM. Eg. http://localhost:1234/v1"
                 }
             },
-            "openai": {
-                "title": "Setup OpenAI Endpoint",
-                "description": "This step requires you to provide an API Key that you have setup on the OpenAI website."
+            "details": {
+                "title": "Configure Endpoint details",
+                "description": "Fine-tune the OpenAI endpoint.",
+                "data": {
+                    "persona": "A short sentence that describes the persona (mood) of the OpenAI model.",
+                    "keep_history": "Disable this if you want a fresh response to each question. If enabled, the chat completion will try to answer your question in context of previous questions and answers.",
+                    "temperature": "Float value that ranges from 0 to 1. Higher numbers should cause more unique responses.",
+                    "max_tokens": "How many tokens to spend per response. Higher numbers might return longer and better responses."
+                }
+
 
             },
             "custom_llm": {

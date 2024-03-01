@@ -2,17 +2,16 @@ from copy import deepcopy
 import logging
 from typing import Any, Dict, Optional
 from openai import OpenAI
-from homeassistant import config_entries, core
+from homeassistant import config_entries
 from homeassistant.const import CONF_API_KEY, CONF_NAME, CONF_PATH, CONF_URL
 from homeassistant.core import callback
-from homeassistant.helpers.aiohttp_client import async_get_clientsession
+#from homeassistant.helpers.aiohttp_client import async_get_clientsession
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.entity_registry import (
     async_entries_for_config_entry,
     async_get,
 )
 import voluptuous as vol
-
 from .const import (
     DOMAIN,
     CONF_MODEL,
@@ -55,27 +54,11 @@ DETAILS_SCHEMA = vol.Schema(
     }
 )
 
-OPTIONS_SHCEMA = vol.Schema(
-    {
-        vol.Optional(CONF_NAME, default="foo"): cv.string
-    }
-)
-
-
-# async def validate_path(path: str, access_token: str, hass: core.HassJob) -> None:
-#     """Validates a GitHub repo path.
-
-#     Raises a ValueError if the path is invalid.
-#     """
-#     if len(path.split("/")) != 2:
-#         raise ValueError
-#     session = async_get_clientsession(hass)
-#     gh = GitHubAPI(session, "requester", oauth_token=access_token)
-#     try:
-#         await gh.getitem(f"repos/{path}")
-#     except BadRequest:
-#         raise ValueError
-
+# OPTIONS_SHCEMA = vol.Schema(
+#     {
+#         vol.Optional(CONF_NAME, default="foo"): cv.string
+#     }
+# )
 
 async def validate_openai_auth(api_key: str) -> None:
     """Validates OpenAI auth.
@@ -91,12 +74,6 @@ async def validate_openai_auth(api_key: str) -> None:
         )
     except:
         raise ValueError
-    #gh = GitHubAPI(session, "requester", oauth_token=access_token)
-    # try:
-    #     await gh.getitem("repos/home-assistant/core")
-    # except BadRequest:
-    #     raise ValueError
-
 
 async def validate_custom_llm(base_url: str) -> None:
     """Validates custom LLM connectivity.
@@ -115,7 +92,7 @@ async def validate_custom_llm(base_url: str) -> None:
 
 class OpenAIResponseCustomConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """OpenAI Response custom config flow."""
-
+    VERSION = 1
     data: Optional[Dict[str, Any]]
 
     async def async_step_user(self, user_input: Optional[Dict[str, Any]] = None):
@@ -162,18 +139,7 @@ class OpenAIResponseCustomConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 self.data[CONF_TEMPERATURE] = user_input[CONF_TEMPERATURE]
                 self.data[CONF_MAX_TOKENS] = user_input[CONF_MAX_TOKENS]
 
-                # self.data[CONF_REPOS].append(
-                #     {
-                #         "path": user_input[CONF_PATH],
-                #         "name": user_input.get(CONF_NAME, user_input[CONF_PATH]),
-                #     }
-                # )
-                # If user ticked the box show this form again so they can add an
-                # additional repo.
-                # if user_input.get("add_another", False):
-                #     return await self.async_step_repo()
-
-                # User is done adding repos, create the config entry.
+                # User is done with entering settings, create the config entry.
                 return self.async_create_entry(title="OpenAI Response", data=self.data)
 
         return self.async_show_form(
