@@ -1,6 +1,14 @@
 """Our domain (namespace) for storing config data in home assistant."""
 DOMAIN = "openapi_response"
 
+"""Default values"""
+DEFAULT_NAME = "hassio_openai_response"
+DEFAULT_MODEL = "text-davinci-003"
+DEFAULT_PERSONA = "You are a helpful assistant. Your answers are complete but short."
+DEFAULT_KEEP_HISTORY = False
+DEFAULT_TEMPERATURE = 0.9
+DEFAULT_MAX_TOKENS = 300
+
 """Custom config parameters for this component (use in sensor.yaml)."""
 CONF_API_BASE = "api_base"
 CONF_MODEL = "model"

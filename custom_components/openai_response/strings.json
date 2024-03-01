@@ -1,18 +1,22 @@
 {
-    "title": "OpenAPI Response Sensor",
+    "title": "OpenAI Response Sensor",
     "config": {
+        "error": {
+            "openai_auth": "The OpenAI auth token is invalid.",
+            "custom_llm_auth": "The custom LLM base URL is invalid."
+        },
         "step": {
             "endpoint_selection": {
                 "title": "Select Endpoint",
-                "description": "Choose between the OpenAPI or a custom LLM endpoint.",
+                "description": "Choose between the OpenAI or a custom LLM endpoint.",
                 "menu_options": {
-                    "openapi": "OpenAPI",
+                    "openai": "OpenAI",
                     "other_llm": "Custom LLM"
                 }
             },
-            "openapi": {
-                "title": "Setup OpenAPI Endpoint",
-                "description": "This step requires you to provide an API Key that you have setup on the OpenAPI website."
+            "openai": {
+                "title": "Setup OpenAI Endpoint",
+                "description": "This step requires you to provide an API Key that you have setup on the OpenAI website."
 
             },
             "custom_llm": {
