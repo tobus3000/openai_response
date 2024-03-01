@@ -91,12 +91,12 @@ class OpenAIResponseCustomConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         """Invoked when a user initiates a flow via the user interface."""
         errors: Dict[str, str] = {}
         if user_input is not None:
-            if user_input[CONF_API_KEY]:
+            if user_input.get(CONF_API_KEY):
                 try:
                     await validate_openai_auth(user_input[CONF_API_KEY])
                 except ValueError:
                     errors["base"] = "openai_auth"
-            else:
+            elif user_input.get(CONF_URL):
                 try:
                     await validate_custom_llm(user_input[CONF_URL])
                 except ValueError:
