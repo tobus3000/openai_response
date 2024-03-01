@@ -72,7 +72,7 @@ async def validate_custom_llm(base_url: str) -> None:
 
     Raises a ValueError if the machine cannot be reached.
     """
-    client = OpenAI(base_url=base_url)
+    client = OpenAI(base_url=base_url, api_key="nokey")
     try:
         response = client.completions.create(
             engine="davinci",
