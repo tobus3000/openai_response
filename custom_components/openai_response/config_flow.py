@@ -3,7 +3,7 @@ import logging
 from typing import Any, Dict, Optional
 from openai import OpenAI
 from homeassistant import config_entries
-from homeassistant.const import CONF_API_KEY, CONF_NAME, CONF_PATH, CONF_URL
+from homeassistant.const import CONF_API_KEY, CONF_NAME, CONF_URL
 from homeassistant.core import callback
 #from homeassistant.helpers.aiohttp_client import async_get_clientsession
 import homeassistant.helpers.config_validation as cv
@@ -28,14 +28,6 @@ from .const import (
 )
 
 _LOGGER = logging.getLogger(__name__)
-
-# Setup required and optional input items.
-# CONF_API_BASE = "api_base"
-# CONF_MODEL = "model"
-# CONF_PERSONA = "persona"
-# CONF_KEEPHISTORY = "keep_history"
-# CONF_TEMPERATURE = "temperature"
-# CONF_MAX_TOKENS = "max_tokens"
 
 AUTH_SCHEMA = vol.Schema(
     {
@@ -112,7 +104,6 @@ class OpenAIResponseCustomConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             if not errors:
                 # Input is valid, set data.
                 self.data = user_input
-                #self.data[CONF_REPOS] = []
                 # Return the form of the next step.
                 return await self.async_step_details()
 
@@ -146,87 +137,87 @@ class OpenAIResponseCustomConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="details", data_schema=DETAILS_SCHEMA, errors=errors
         )
 
-    @staticmethod
-    @callback
-    def async_get_options_flow(config_entry):
-        """Get the options flow for this handler."""
-        return OptionsFlowHandler(config_entry)
+    # @staticmethod
+    # @callback
+    # def async_get_options_flow(config_entry):
+    #     """Get the options flow for this handler."""
+    #     return OptionsFlowHandler(config_entry)
 
 
-class OptionsFlowHandler(config_entries.OptionsFlow):
-    """Handles options flow for the component."""
+# class OptionsFlowHandler(config_entries.OptionsFlow):
+#     """Handles options flow for the component."""
 
-    def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
-        self.config_entry = config_entry
+#     def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
+#         self.config_entry = config_entry
 
-    async def async_step_init(
-        self, user_input: Dict[str, Any] = None
-    ) -> Dict[str, Any]:
-        """Manage the options for the custom component."""
-        errors: Dict[str, str] = {}
-        # Grab all configured repos from the entity registry so we can populate the
-        # multi-select dropdown that will allow a user to remove a repo.
-        entity_registry = async_get(self.hass)
-        entries = async_entries_for_config_entry(
-            entity_registry, self.config_entry.entry_id
-        )
-        # Default value for our multi-select.
-        all_repos = {e.entity_id: e.original_name for e in entries}
-        repo_map = {e.entity_id: e for e in entries}
+#     async def async_step_init(
+#         self, user_input: Dict[str, Any] = None
+#     ) -> Dict[str, Any]:
+#         """Manage the options for the custom component."""
+#         errors: Dict[str, str] = {}
+#         # Grab all configured repos from the entity registry so we can populate the
+#         # multi-select dropdown that will allow a user to remove a repo.
+#         entity_registry = async_get(self.hass)
+#         entries = async_entries_for_config_entry(
+#             entity_registry, self.config_entry.entry_id
+#         )
+#         # Default value for our multi-select.
+#         all_repos = {e.entity_id: e.original_name for e in entries}
+#         repo_map = {e.entity_id: e for e in entries}
 
-        if user_input is not None:
-            updated_repos = deepcopy(self.config_entry.data[CONF_REPOS])
+#         if user_input is not None:
+#             updated_repos = deepcopy(self.config_entry.data[CONF_REPOS])
 
-            # Remove any unchecked repos.
-            removed_entities = [
-                entity_id
-                for entity_id in repo_map.keys()
-                if entity_id not in user_input["repos"]
-            ]
-            for entity_id in removed_entities:
-                # Unregister from HA
-                entity_registry.async_remove(entity_id)
-                # Remove from our configured repos.
-                entry = repo_map[entity_id]
-                entry_path = entry.unique_id
-                updated_repos = [e for e in updated_repos if e["path"] != entry_path]
+#             # Remove any unchecked repos.
+#             removed_entities = [
+#                 entity_id
+#                 for entity_id in repo_map.keys()
+#                 if entity_id not in user_input["repos"]
+#             ]
+#             for entity_id in removed_entities:
+#                 # Unregister from HA
+#                 entity_registry.async_remove(entity_id)
+#                 # Remove from our configured repos.
+#                 entry = repo_map[entity_id]
+#                 entry_path = entry.unique_id
+#                 updated_repos = [e for e in updated_repos if e["path"] != entry_path]
 
-            if user_input.get(CONF_PATH):
-                # Validate the path.
-                access_token = self.hass.data[DOMAIN][self.config_entry.entry_id][
-                    CONF_ACCESS_TOKEN
-                ]
-                try:
-                    await validate_path(user_input[CONF_PATH], access_token, self.hass)
-                except ValueError:
-                    errors["base"] = "invalid_path"
+#             if user_input.get(CONF_PATH):
+#                 # Validate the path.
+#                 access_token = self.hass.data[DOMAIN][self.config_entry.entry_id][
+#                     CONF_ACCESS_TOKEN
+#                 ]
+#                 try:
+#                     await validate_path(user_input[CONF_PATH], access_token, self.hass)
+#                 except ValueError:
+#                     errors["base"] = "invalid_path"
 
-                if not errors:
-                    # Add the new repo.
-                    updated_repos.append(
-                        {
-                            "path": user_input[CONF_PATH],
-                            "name": user_input.get(CONF_NAME, user_input[CONF_PATH]),
-                        }
-                    )
+#                 if not errors:
+#                     # Add the new repo.
+#                     updated_repos.append(
+#                         {
+#                             "path": user_input[CONF_PATH],
+#                             "name": user_input.get(CONF_NAME, user_input[CONF_PATH]),
+#                         }
+#                     )
 
-            if not errors:
-                # Value of data will be set on the options property of our config_entry
-                # instance.
-                return self.async_create_entry(
-                    title="",
-                    data={CONF_REPOS: updated_repos},
-                )
+#             if not errors:
+#                 # Value of data will be set on the options property of our config_entry
+#                 # instance.
+#                 return self.async_create_entry(
+#                     title="",
+#                     data={CONF_REPOS: updated_repos},
+#                 )
 
-        options_schema = vol.Schema(
-            {
-                vol.Optional("repos", default=list(all_repos.keys())): cv.multi_select(
-                    all_repos
-                ),
-                vol.Optional(CONF_PATH): cv.string,
-                vol.Optional(CONF_NAME): cv.string,
-            }
-        )
-        return self.async_show_form(
-            step_id="init", data_schema=options_schema, errors=errors
-        )
+#         options_schema = vol.Schema(
+#             {
+#                 vol.Optional("repos", default=list(all_repos.keys())): cv.multi_select(
+#                     all_repos
+#                 ),
+#                 vol.Optional(CONF_PATH): cv.string,
+#                 vol.Optional(CONF_NAME): cv.string,
+#             }
+#         )
+#         return self.async_show_form(
+#             step_id="init", data_schema=options_schema, errors=errors
+#         )

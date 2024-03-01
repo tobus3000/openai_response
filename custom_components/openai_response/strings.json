@@ -26,10 +26,6 @@
                 }
 
 
-            },
-            "custom_llm": {
-                "title": "Setup a custom LLM Endpoint",
-                "description": "Provide the details to your custom LLM endpoints."
             }
         }
     }

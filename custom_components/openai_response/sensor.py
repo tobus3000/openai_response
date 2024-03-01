@@ -5,10 +5,9 @@ import logging
 from openai import OpenAI
 import voluptuous as vol
 from homeassistant.components.sensor import PLATFORM_SCHEMA, SensorEntity
-from homeassistant.const import CONF_API_KEY, CONF_NAME
+from homeassistant.const import CONF_API_KEY, CONF_NAME, CONF_URL
 from .const import (
     CONF_MODEL,
-    CONF_API_BASE,
     CONF_PERSONA,
     CONF_KEEPHISTORY,
     CONF_TEMPERATURE,
@@ -32,7 +31,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     {
         vol.Optional(CONF_API_KEY, default=DEFAULT_API_KEY): cv.string,
         vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
-        vol.Optional(CONF_API_BASE, default=DEFAULT_API_BASE): cv.string,
+        vol.Optional(CONF_URL, default=DEFAULT_API_BASE): cv.string,
         vol.Optional(CONF_PERSONA, default=DEFAULT_PERSONA): cv.string,
         vol.Optional(CONF_KEEPHISTORY, default=DEFAULT_KEEP_HISTORY): cv.boolean,
         vol.Optional(CONF_TEMPERATURE, default=DEFAULT_TEMPERATURE): cv.positive_float,
@@ -43,7 +42,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
 
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
     """Setup basic OpenAI session."""
-    api_base = config.get(CONF_API_BASE)
+    api_base = config.get(CONF_URL)
     api_key = config[CONF_API_KEY]
     if api_base != "":
         client = OpenAI(base_url=api_base, api_key=api_key)
