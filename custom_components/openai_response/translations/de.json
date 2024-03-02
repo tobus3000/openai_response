@@ -11,7 +11,7 @@
                     "data": {
                         "endpoint_type": "Auswahl Endpunkt Typ"
                     }
-            ,
+            },
             "user": {
                 "title": "Endpunkt einrichten",
                 "description": "Konfiguriere einen eigenen LLM Endpunkt oder verwende den OpenAI Cloud Endpunkt.",
