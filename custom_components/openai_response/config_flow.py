@@ -69,8 +69,8 @@ async def validate_openai_auth(api_key: str) -> None:
     client = OpenAI(api_key=api_key)
     try:
         response = client.chat.completions.create(
-            model="davinci",
-            messages=["This is a connection test."],
+            model=DEFAULT_MODEL,
+            messages=[{"role": "system", "content": "This is a connection test."}],
             max_tokens=5
         )
     except Exception as exc:
@@ -85,8 +85,8 @@ async def validate_custom_llm(base_url: str) -> None:
     client = OpenAI(base_url=base_url, api_key="nokey")
     try:
         response = client.chat.completions.create(
-            model="davinci",
-            messages=["This is a connection test."],
+            model="local-model",
+            messages=[{"role": "system", "content": "This is a connection test."}],
             max_tokens=5
         )
     except Exception as exc:
