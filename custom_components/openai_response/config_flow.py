@@ -30,12 +30,6 @@ from .const import (
 
 _LOGGER = logging.getLogger(__name__)
 
-# TYPE_SCHEMA = vol.Schema(
-#     {
-#         vol.Required(CONF_ENDPOINT_TYPE): cv.enum
-#     }
-# )
-
 AUTH_SCHEMA = vol.Schema(
     {
         vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
@@ -104,9 +98,10 @@ class OpenAIResponseCustomConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             }
         })
         if user_input is not None:
-            self.data[CONF_ENDPOINT_TYPE] = user_input[CONF_ENDPOINT_TYPE]
+            self.user_info = user_input
+            _LOGGER.info(self.user_info)
 
-            if self.data.get(CONF_ENDPOINT_TYPE) == "openai":
+            if self.user_info.get(CONF_ENDPOINT_TYPE) == "openai":
                 return await self.async_step_setup()
             #return await self.async_step_setup()
         
