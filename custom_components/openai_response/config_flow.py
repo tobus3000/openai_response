@@ -69,11 +69,12 @@ async def validate_openai_auth(api_key: str) -> None:
     client = OpenAI(api_key=api_key)
     try:
         response = client.chat.completions.create(
-            engine="davinci",
-            prompt="This is a connection test.",
+            model="davinci",
+            messages=["This is a connection test."],
             max_tokens=5
         )
     except Exception as exc:
+        _LOGGER.error(str(exc))
         raise ValueError from exc
 
 async def validate_custom_llm(base_url: str) -> None:
@@ -84,11 +85,12 @@ async def validate_custom_llm(base_url: str) -> None:
     client = OpenAI(base_url=base_url, api_key="nokey")
     try:
         response = client.chat.completions.create(
-            engine="davinci",
-            prompt="This is a connection test.",
+            model="davinci",
+            messages=["This is a connection test."],
             max_tokens=5
         )
     except Exception as exc:
+        _LOGGER.error(str(exc))
         raise ValueError from exc
 
 class OpenAIResponseCustomConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
