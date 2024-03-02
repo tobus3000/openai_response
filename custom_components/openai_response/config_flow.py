@@ -104,10 +104,11 @@ class OpenAIResponseCustomConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             #return await self.async_step_setup()
         
         if not errors:
+            pass
             # Input is valid, set data.
-            self.data = user_input
+            #self.data = user_input
             # Return the form of the next step.
-            return await self.async_step_details()
+            #return await self.async_step_details()
 
         return self.async_show_form(
             step_id="user", data_schema=TYPE_SCHEMA, errors=errors
