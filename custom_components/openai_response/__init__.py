@@ -27,15 +27,17 @@ async def async_setup_entry(
     return True
 
 async def options_update_listener(
-    hass: core.HomeAssistant, config_entry: config_entries.ConfigEntry
-):
+        hass: core.HomeAssistant,
+        config_entry: config_entries.ConfigEntry
+    ):
     """Handle options update."""
     await hass.config_entries.async_reload(config_entry.entry_id)
 
 
 async def async_unload_entry(
-    hass: core.HomeAssistant, entry: config_entries.ConfigEntry
-) -> bool:
+        hass: core.HomeAssistant,
+        entry: config_entries.ConfigEntry
+    ) -> bool:
     """Unload a config entry."""
     if unload_ok := await hass.config_entries.async_unload_platforms(entry, PLATFORMS):
         # Remove config entry from domain.
@@ -46,7 +48,10 @@ async def async_unload_entry(
     return unload_ok
 
 
-async def async_setup(hass: core.HomeAssistant, config: dict) -> bool:
+async def async_setup(
+        hass: core.HomeAssistant,
+        config: dict
+    ) -> bool:
     """Set up the GitHub Custom component from yaml configuration."""
     hass.data.setdefault(DOMAIN, {})
     return True

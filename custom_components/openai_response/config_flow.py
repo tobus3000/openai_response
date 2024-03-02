@@ -93,40 +93,39 @@ class OpenAIResponseCustomConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
     data: Optional[Dict[str, Any]]
 
-    async def async_step_type_select(self, user_input: Optional[Dict[str, Any]] = None):
+    async def async_step_user(self, user_input: Optional[Dict[str, Any]] = None):
         """Invoked when a user initiates a flow via the user interface."""
         errors: Dict[str, str] = {}
         if user_input is not None:
             if user_input.get(CONF_ENDPOINT_TYPE) == "openai":
-                return await self.async_step_user()
-            return await self.async_step_user()
+                return await self.async_step_setup()
+            return await self.async_step_setup()
         
+        if not errors:
+            # Input is valid, set data.
+            self.data = user_input
+            # Return the form of the next step.
+            return await self.async_step_details()
+
         return self.async_show_form(
-            step_id="type_select", data_schema=TYPE_SCHEMA, errors=errors
+            step_id="user", data_schema=TYPE_SCHEMA, errors=errors
         )
 
-    async def async_step_user(self, user_input: Optional[Dict[str, Any]] = None):
-        """Step to setup the endpoint."""
+    async def async_step_setup(self, user_input: Optional[Dict[str, Any]] = None):
         errors: Dict[str, str] = {}
-        if user_input is not None:
-            if user_input.get(CONF_API_KEY):
-                try:
-                    await validate_openai_auth(user_input[CONF_API_KEY])
-                except ValueError:
-                    errors["base"] = "openai_auth"
-            elif user_input.get(CONF_URL):
-                try:
-                    await validate_custom_llm(user_input[CONF_URL])
-                except ValueError:
-                    errors["base"] = "custom_llm_auth"
-            if not errors:
-                # Input is valid, set data.
-                self.data = user_input
-                # Return the form of the next step.
-                return await self.async_step_details()
-
+        if user_input.get(CONF_API_KEY):
+            try:
+                await validate_openai_auth(user_input[CONF_API_KEY])
+            except ValueError:
+                errors["base"] = "openai_auth"
+        elif user_input.get(CONF_URL):
+            try:
+                await validate_custom_llm(user_input[CONF_URL])
+            except ValueError:
+                errors["base"] = "custom_llm_auth"
+        
         return self.async_show_form(
-            step_id="user", data_schema=AUTH_SCHEMA, errors=errors
+            step_id="setup", data_schema=AUTH_SCHEMA, errors=errors
         )
 
     async def async_step_details(self, user_input: Optional[Dict[str, Any]] = None):
