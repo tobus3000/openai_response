@@ -94,7 +94,7 @@ class OpenAIResponseCustomConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         data_schema = {}
         data_schema["endpoint_type"] = selector({
             "select": {
-                "options": ["OpenAI", "Custom"],
+                "options": ["openai", "custom"],
             }
         })
         if user_input is not None:
@@ -103,14 +103,8 @@ class OpenAIResponseCustomConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
             if self.user_info.get(CONF_ENDPOINT_TYPE) == "openai":
                 return await self.async_step_setup()
-            #return await self.async_step_setup()
-        
-            # if not errors:
-            #     pass
-                # Input is valid, set data.
-                #self.data = user_input
-                # Return the form of the next step.
-                #return await self.async_step_details()
+            elif self.user_info.get(CONF_ENDPOINT_TYPE) == "custom":
+                return await self.async_step_setup()
 
         return self.async_show_form(
             step_id="user", data_schema=vol.Schema(data_schema), errors=errors
