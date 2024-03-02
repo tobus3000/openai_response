@@ -5,6 +5,13 @@
             "custom_llm_auth": "Die Adresse des LLM Endpunktes ist ungültig."
         },
         "step": {
+            "type_select": {
+                    "title": "Wähle den Endpunkt Typ",
+                    "description": "Entscheide dich zwischen dem Cloud OpenAI oder einem eigenen LLM Endpunkt.",
+                    "data": {
+                        "endpoint_type": "Auswahl Endpunkt Typ"
+                    }
+            ,
             "user": {
                 "title": "Endpunkt einrichten",
                 "description": "Konfiguriere einen eigenen LLM Endpunkt oder verwende den OpenAI Cloud Endpunkt.",

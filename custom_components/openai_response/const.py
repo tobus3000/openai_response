@@ -10,6 +10,7 @@ DEFAULT_TEMPERATURE = 0.9
 DEFAULT_MAX_TOKENS = 300
 
 """Custom config parameters for this component (use in sensor.yaml)."""
+CONF_ENDPOINT_TYPE = "endpoint_type"
 CONF_MODEL = "model"
 CONF_PERSONA = "persona"
 CONF_KEEPHISTORY = "keep_history"

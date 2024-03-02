@@ -5,6 +5,13 @@
             "custom_llm_auth": "The custom LLM base URL is invalid."
         },
         "step": {
+            "type_select": {
+                "title": "Select Endpoint Type",
+                "description": "Decide between the Cloud OpenAI or a custom LLM endpoint.",
+                "data": {
+                    "endpoint_type": "Endpoint Type selection"
+                }
+            },
             "user": {
                 "title": "Setup Endpoint",
                 "description": "Choose between the OpenAI or a custom LLM endpoint.",

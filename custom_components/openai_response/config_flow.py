@@ -14,6 +14,7 @@ from homeassistant.helpers.entity_registry import (
 import voluptuous as vol
 from .const import (
     DOMAIN,
+    CONF_ENDPOINT_TYPE,
     CONF_MODEL,
     CONF_PERSONA,
     CONF_KEEPHISTORY,
@@ -28,6 +29,12 @@ from .const import (
 )
 
 _LOGGER = logging.getLogger(__name__)
+
+TYPE_SCHEMA = vol.Schema(
+    {
+        vol.Required(CONF_ENDPOINT_TYPE): cv.enum
+    }
+)
 
 AUTH_SCHEMA = vol.Schema(
     {
@@ -87,8 +94,20 @@ class OpenAIResponseCustomConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
     data: Optional[Dict[str, Any]]
 
-    async def async_step_user(self, user_input: Optional[Dict[str, Any]] = None):
+    async def async_step_type_select(self, user_input: Optional[Dict[str, Any]] = None):
         """Invoked when a user initiates a flow via the user interface."""
+        errors: Dict[str, str] = {}
+        if user_input is not None:
+            if user_input.get(CONF_ENDPOINT_TYPE) == "openai":
+                return await self.async_step_user()
+            return await self.async_step_user()
+        
+        return self.async_show_form(
+            step_id="endpoint_type", data_schema=TYPE_SCHEMA, errors=errors
+        )
+
+    async def async_step_user(self, user_input: Optional[Dict[str, Any]] = None):
+        """Step to setup the endpoint."""
         errors: Dict[str, str] = {}
         if user_input is not None:
             if user_input.get(CONF_API_KEY):
