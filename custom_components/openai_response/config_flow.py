@@ -97,9 +97,11 @@ class OpenAIResponseCustomConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         """Invoked when a user initiates a flow via the user interface."""
         errors: Dict[str, str] = {}
         if user_input is not None:
-            if user_input.get(CONF_ENDPOINT_TYPE) == "openai":
+            self.data[CONF_ENDPOINT_TYPE] = user_input[CONF_ENDPOINT_TYPE]
+
+            if self.data.get(CONF_ENDPOINT_TYPE) == "openai":
                 return await self.async_step_setup()
-            return await self.async_step_setup()
+            #return await self.async_step_setup()
         
         if not errors:
             # Input is valid, set data.
