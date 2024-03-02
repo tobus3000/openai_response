@@ -112,16 +112,17 @@ class OpenAIResponseCustomConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def async_step_setup(self, user_input: Optional[Dict[str, Any]] = None):
         errors: Dict[str, str] = {}
-        if user_input.get(CONF_API_KEY):
-            try:
-                await validate_openai_auth(user_input[CONF_API_KEY])
-            except ValueError:
-                errors["base"] = "openai_auth"
-        elif user_input.get(CONF_URL):
-            try:
-                await validate_custom_llm(user_input[CONF_URL])
-            except ValueError:
-                errors["base"] = "custom_llm_auth"
+        if user_input is not None:
+            if user_input.get(CONF_API_KEY):
+                try:
+                    await validate_openai_auth(user_input[CONF_API_KEY])
+                except ValueError:
+                    errors["base"] = "openai_auth"
+            elif user_input.get(CONF_URL):
+                try:
+                    await validate_custom_llm(user_input[CONF_URL])
+                except ValueError:
+                    errors["base"] = "custom_llm_auth"
         
         return self.async_show_form(
             step_id="setup", data_schema=AUTH_SCHEMA, errors=errors
