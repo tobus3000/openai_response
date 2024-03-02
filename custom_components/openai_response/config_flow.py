@@ -5,6 +5,7 @@ from openai import OpenAI
 from homeassistant import config_entries
 from homeassistant.const import CONF_API_KEY, CONF_NAME, CONF_URL
 from homeassistant.core import callback
+from homeassistant.helpers.selector import selector
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.entity_registry import (
     async_entries_for_config_entry,
@@ -29,11 +30,11 @@ from .const import (
 
 _LOGGER = logging.getLogger(__name__)
 
-TYPE_SCHEMA = vol.Schema(
-    {
-        vol.Required(CONF_ENDPOINT_TYPE): cv.enum
-    }
-)
+# TYPE_SCHEMA = vol.Schema(
+#     {
+#         vol.Required(CONF_ENDPOINT_TYPE): cv.enum
+#     }
+# )
 
 AUTH_SCHEMA = vol.Schema(
     {
@@ -96,6 +97,12 @@ class OpenAIResponseCustomConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     async def async_step_user(self, user_input: Optional[Dict[str, Any]] = None):
         """Invoked when a user initiates a flow via the user interface."""
         errors: Dict[str, str] = {}
+        data_schema = {}
+        data_schema["endpoint_type"] = selector({
+            "select": {
+                "options": ["OpenAI", "Custom"],
+            }
+        })
         if user_input is not None:
             self.data[CONF_ENDPOINT_TYPE] = user_input[CONF_ENDPOINT_TYPE]
 
@@ -111,7 +118,7 @@ class OpenAIResponseCustomConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 #return await self.async_step_details()
 
         return self.async_show_form(
-            step_id="user", data_schema=TYPE_SCHEMA, errors=errors
+            step_id="user", data_schema=vol.Schema(data_schema), errors=errors
         )
 
     async def async_step_setup(self, user_input: Optional[Dict[str, Any]] = None):
