@@ -14,7 +14,7 @@
             },
             "setup": {
                 "title": "Endpunkt einrichten",
-                "description": "Konfiguriere einen eigenen LLM Endpunkt oder verwende den OpenAI Cloud Endpunkt.",
+                "description": "Konfiguriere den Endpunkt.",
                 "data": {
                     "name": "Name des OpenAI Response Sensors",
                     "api_key": "OpenAI API key",

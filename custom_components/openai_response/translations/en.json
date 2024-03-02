@@ -14,7 +14,7 @@
             },
             "setup": {
                 "title": "Setup Endpoint",
-                "description": "Choose between the OpenAI or a custom LLM endpoint.",
+                "description": "Configure the endpoint.",
                 "data": {
                     "name": "Name of your OpenAI Response Sensor",
                     "api_key": "OpenAI API key",

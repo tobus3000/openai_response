@@ -30,14 +30,22 @@ from .const import (
 
 _LOGGER = logging.getLogger(__name__)
 
-AUTH_SCHEMA = vol.Schema(
+OPENAI_SCHEMA = vol.Schema(
     {
         vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
         vol.Optional(CONF_API_KEY): cv.string,
+        vol.Optional(CONF_MODEL, default=DEFAULT_MODEL): cv.string
+    }
+)
+
+CUSTOM_LLM_SCHEMA = vol.Schema(
+    {
+        vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
         vol.Optional(CONF_URL): cv.string,
         vol.Optional(CONF_MODEL, default=DEFAULT_MODEL): cv.string
     }
 )
+
 DETAILS_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_PERSONA, default=DEFAULT_PERSONA): cv.string,
@@ -124,9 +132,14 @@ class OpenAIResponseCustomConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 except ValueError:
                     errors["base"] = "custom_llm_auth"
         
-        return self.async_show_form(
-            step_id="setup", data_schema=AUTH_SCHEMA, errors=errors
-        )
+        if self.user_info[CONF_ENDPOINT_TYPE] == "openai":
+            return self.async_show_form(
+                step_id="setup", data_schema=OPENAI_SCHEMA, errors=errors
+            )
+        elif self.user_info[CONF_ENDPOINT_TYPE] == "custom":
+            return self.async_show_form(
+                step_id="setup", data_schema=CUSTOM_LLM_SCHEMA, errors=errors
+            )
 
     async def async_step_details(self, user_input: Optional[Dict[str, Any]] = None):
         """Second step in config flow to settup openai details."""
