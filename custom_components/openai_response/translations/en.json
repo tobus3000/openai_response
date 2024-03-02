@@ -18,7 +18,7 @@
                 "data": {
                     "name": "Name of your OpenAI Response Sensor",
                     "api_key": "OpenAI API key",
-                    "url": "The base URL to your custom LLM. Eg. http://localhost:1234/v1"
+                    "url": "The base URL to the OpenAI compatible LLM. Eg. http://localhost:1234/v1"
                 }
             },
             "details": {
