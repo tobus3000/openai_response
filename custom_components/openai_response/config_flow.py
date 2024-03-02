@@ -5,7 +5,6 @@ from openai import OpenAI
 from homeassistant import config_entries
 from homeassistant.const import CONF_API_KEY, CONF_NAME, CONF_URL
 from homeassistant.core import callback
-#from homeassistant.helpers.aiohttp_client import async_get_clientsession
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.entity_registry import (
     async_entries_for_config_entry,
@@ -66,13 +65,13 @@ async def validate_openai_auth(api_key: str) -> None:
     """
     client = OpenAI(api_key=api_key)
     try:
-        response = client.completions.create(
+        response = client.chat.completions.create(
             engine="davinci",
             prompt="This is a connection test.",
             max_tokens=5
         )
-    except:
-        raise ValueError
+    except Exception as exc:
+        raise ValueError from exc
 
 async def validate_custom_llm(base_url: str) -> None:
     """Validates custom LLM connectivity.
@@ -81,13 +80,13 @@ async def validate_custom_llm(base_url: str) -> None:
     """
     client = OpenAI(base_url=base_url, api_key="nokey")
     try:
-        response = client.completions.create(
+        response = client.chat.completions.create(
             engine="davinci",
             prompt="This is a connection test.",
             max_tokens=5
         )
-    except:
-        raise ValueError
+    except Exception as exc:
+        raise ValueError from exc
 
 class OpenAIResponseCustomConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """OpenAI Response custom config flow."""
@@ -103,7 +102,7 @@ class OpenAIResponseCustomConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             return await self.async_step_user()
         
         return self.async_show_form(
-            step_id="endpoint_type", data_schema=TYPE_SCHEMA, errors=errors
+            step_id="type_select", data_schema=TYPE_SCHEMA, errors=errors
         )
 
     async def async_step_user(self, user_input: Optional[Dict[str, Any]] = None):

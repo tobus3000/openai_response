@@ -24,7 +24,7 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.core import callback
 
 _LOGGER = logging.getLogger(__name__)
-DEFAULT_API_KEY = "no-key"
+DEFAULT_API_KEY = "nokey"
 DEFAULT_API_BASE = ""
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
