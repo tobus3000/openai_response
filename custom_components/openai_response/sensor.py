@@ -111,7 +111,7 @@ async def async_setup_entry(
     """Setup sensors from a config entry created in the integrations UI."""
     openai_response: OpenAIResponse = hass.data[DOMAIN]
     config = entry.as_dict()
-    _LOGGER.debug("config_entry: %s", config)
+    _LOGGER.debug("OpenAI config_entry: %s", config)
     if config['data'].get('endpoint_type') == "custom":
         client = OpenAI(
             base_url=config['data'].get("url"),
