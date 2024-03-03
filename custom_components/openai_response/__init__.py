@@ -1,15 +1,25 @@
 """OpenAI Response custom component."""
-import asyncio
 import logging
-from homeassistant import config_entries, core
-from homeassistant.const import Platform
+from homeassistant import config_entries
+from homeassistant.core import CALLBACK_TYPE, Event, HomeAssistant, callback
+from homeassistant.const import Platform, EVENT_CORE_CONFIG_UPDATE
+from homeassistant.helpers.entity import Entity
 from .const import DOMAIN
 from .config_flow import OpenAIResponseCustomConfigFlow
 _LOGGER = logging.getLogger(__name__)
 PLATFORMS = [Platform.SENSOR]
+ENTITY_ID = "openai_response"
+
+async def async_setup(
+        hass: HomeAssistant,
+        config: dict
+    ) -> bool:
+    """Set up the OpenAI Response Custom component from yaml configuration."""
+    hass.data.setdefault(DOMAIN, config)
+    return True
 
 async def async_setup_entry(
-        hass: core.HomeAssistant,
+        hass: HomeAssistant,
         entry: config_entries.ConfigEntry
     ) -> bool:
     """Set up platform from a ConfigEntry."""
@@ -28,7 +38,7 @@ async def async_setup_entry(
     return True
 
 async def options_update_listener(
-        hass: core.HomeAssistant,
+        hass: HomeAssistant,
         config_entry: config_entries.ConfigEntry
     ):
     """Handle options update."""
@@ -36,7 +46,7 @@ async def options_update_listener(
 
 
 async def async_unload_entry(
-        hass: core.HomeAssistant,
+        hass: HomeAssistant,
         entry: config_entries.ConfigEntry
     ) -> bool:
     """Unload a config entry."""
@@ -44,6 +54,7 @@ async def async_unload_entry(
         # Remove config entry from domain.
         entry_data = hass.data[DOMAIN].pop(entry.entry_id)
         _LOGGER.debug(entry_data)
+
         # Remove options_update_listener.
         entry_data["unsub_options_update_listener"]()
 
@@ -53,10 +64,33 @@ async def async_unload_entry(
 #     """Get the options flow for this handler."""
 #     return OpenAIResponseCustomConfigFlow(config_entry)
 
-async def async_setup(
-        hass: core.HomeAssistant,
-        config: dict
-    ) -> bool:
-    """Set up the OpenAI Response Custom component from yaml configuration."""
-    hass.data.setdefault(DOMAIN, config)
-    return True
+class OpenAIResponse(Entity):
+    """Represents the OpenAI Response component."""
+    _attr_name = "OpenAI Response"
+    entity_id = ENTITY_ID
+
+    def __init__(self, hass: HomeAssistant) -> None:
+        """Initialize the OpenAIResponse."""
+        self.hass = hass
+        self._config_listener: CALLBACK_TYPE | None = None
+        self._update_events_listener: CALLBACK_TYPE | None = None
+        # self._config_listener = self.hass.bus.async_listen(
+        #     EVENT_CORE_CONFIG_UPDATE, self.async_generate_openai_response
+        # )
+        # self.update_location(initial=True)
+    
+    @callback
+    def remove_listeners(self) -> None:
+        """Remove listeners."""
+        pass
+        # if self._config_listener:
+        #     self._config_listener()
+        # if self._update_events_listener:
+        #     self._update_events_listener()
+        # if self._update_sun_position_listener:
+        #     self._update_sun_position_listener()
+            
+    @property
+    def state(self) -> str:
+        """Return state of the component."""
+        return "Active"

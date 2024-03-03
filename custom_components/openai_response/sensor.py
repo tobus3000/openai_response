@@ -2,13 +2,27 @@
 OpenAI Response - Sensor
 """
 import logging
+from collections.abc import Callable
+from dataclasses import dataclass
 from openai import OpenAI
 import voluptuous as vol
+from datetime import datetime
 from homeassistant import config_entries, core
-from homeassistant.components.sensor import PLATFORM_SCHEMA, SensorEntity, Entity
+from homeassistant.helpers.device_registry import DeviceEntryType, DeviceInfo
+from homeassistant.helpers.typing import StateType
+from homeassistant.helpers.dispatcher import async_dispatcher_connect
+from homeassistant.components.sensor import (
+    PLATFORM_SCHEMA,
+    SensorDeviceClass,
+    SensorEntity,
+    SensorEntityDescription,
+    Entity
+)
 from homeassistant.const import CONF_API_KEY, CONF_NAME, CONF_URL
+from . import OpenAIResponse
 from .const import (
     DOMAIN,
+    SIGNAL_EVENTS_CHANGED,
     CONF_MODEL,
     CONF_PERSONA,
     CONF_KEEPHISTORY,
@@ -28,6 +42,7 @@ from homeassistant.core import callback
 _LOGGER = logging.getLogger(__name__)
 DEFAULT_API_KEY = "nokey"
 DEFAULT_API_BASE = ""
+ENTITY_ID_SENSOR_FORMAT = DOMAIN + ".response_{}"
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     {
@@ -40,6 +55,24 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
         vol.Optional(CONF_MAX_TOKENS, default=DEFAULT_MAX_TOKENS): cv.positive_int,
         vol.Optional(CONF_MODEL, default=DEFAULT_MODEL): cv.string,
     }
+)
+
+@dataclass(kw_only=True, frozen=True)
+class OpenAIResponseSensorEntityDescription(SensorEntityDescription):
+    """Describes a OpenAI Response sensor entity."""
+
+    value_fn: Callable[[OpenAIResponse], StateType | datetime]
+    signal: str
+
+#TODO: Update device from sun component.
+SENSOR_TYPES: tuple[OpenAIResponseSensorEntityDescription, ...] = (
+    OpenAIResponseSensorEntityDescription(
+        key="response_text",
+        #device_class=SensorDeviceClass.TIMESTAMP,
+        #translation_key="response_text",
+        value_fn=lambda data: data.response_text,
+        signal=SIGNAL_EVENTS_CHANGED,
+    )
 )
 
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
@@ -94,9 +127,23 @@ def generate_openai_response_sync(client, model, prompt, temperature, max_tokens
 
 class OpenAIResponseSensor(SensorEntity):
     """Defines the OpenAI Response Sensor object."""
+    entity_description: OpenAIResponseSensorEntityDescription
 
-    def __init__(self, **kwargs):
+    #def __init__(self, **kwargs):
+    def __init__(
+        self, openai_response: OpenAIResponse, entity_description: OpenAIResponseSensorEntityDescription, entry_id: str, **kwargs
+    ) -> None:
         _LOGGER.debug(kwargs)
+        self.entity_description = entity_description
+        self.entity_id = ENTITY_ID_SENSOR_FORMAT.format(entity_description.key)
+        self._attr_unique_id = f"{entry_id}-{entity_description.key}"
+
+        self._attr_device_info = DeviceInfo(
+            name="OpenAI Response Sensor",
+            identifiers={(DOMAIN, entry_id)},
+            entry_type=DeviceEntryType.SERVICE,
+        )
+
         self._hass = kwargs.get("hass")
         self._name = kwargs.get("name")
         self._client = kwargs.get("client")
@@ -175,12 +222,14 @@ class OpenAIResponseSensor(SensorEntity):
     async def async_added_to_hass(self):
         """Listen for state change of `input_text.gpt_input` entity."""
         _LOGGER.debug(self)
-        pass
-        # self.async_on_remove(
-            # self._hass.helpers.event.async_track_state_change(
-            #     "input_text.openai_response_input", self.async_generate_openai_response
-            # )
-        # )
+        await super().async_added_to_hass()
+        self.async_on_remove(
+            async_dispatcher_connect(
+                self._hass,
+                self.entity_description.signal,
+                self.async_generate_openai_response,
+            )
+        )
 
     async def async_update(self):
         """Currently unused..."""

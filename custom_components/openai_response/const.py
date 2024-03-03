@@ -16,3 +16,6 @@ CONF_PERSONA = "persona"
 CONF_KEEPHISTORY = "keep_history"
 CONF_TEMPERATURE = "temperature"
 CONF_MAX_TOKENS = "max_tokens"
+
+"""Signals"""
+SIGNAL_EVENTS_CHANGED = f"{DOMAIN}_events_changed"
