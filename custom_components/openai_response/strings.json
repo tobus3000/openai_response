@@ -1,4 +1,5 @@
 {
+    "title": "OpenAI Response Sensor",
     "config": {
         "step": {
             "user": {
