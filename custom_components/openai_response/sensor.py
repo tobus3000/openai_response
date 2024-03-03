@@ -116,8 +116,20 @@ async def async_setup_entry(
     """Setup sensors from a config entry created in the integrations UI."""
     openai_response: OpenAIResponse = hass.data[DOMAIN]
     _LOGGER.debug("config_entry: %s", entry)
+    config = entry.as_dict()
+    _LOGGER.debug("config_entry: %s", config)
+    sensor_config = {}
+    # sensor_config = {
+    #     "name": config[CONF_NAME],
+    #     "client": client,
+    #     "keep_history": config[CONF_KEEPHISTORY],
+    #     "model": config[CONF_MODEL],
+    #     "persona": config[CONF_PERSONA],
+    #     "temperature": config[CONF_TEMPERATURE],
+    #     "max_tokens": config[CONF_MAX_TOKENS]
+    # }
     async_add_entities(
-        [OpenAIResponseSensor(openai_response, description, entry.entry_id, **entry) for description in SENSOR_TYPES]
+        [OpenAIResponseSensor(openai_response, description, entry.entry_id, **sensor_config) for description in SENSOR_TYPES]
     )
 
     
