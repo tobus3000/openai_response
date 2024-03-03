@@ -89,6 +89,9 @@ class OpenAIResponseCustomConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def async_step_user(self, user_input: Optional[Dict[str, Any]] = None):
         """Invoked when a user initiates a flow via the user interface."""
+        if self._async_current_entries():
+            return self.async_abort(reason="single_instance_allowed")
+
         errors: Dict[str, str] = {}
         data_schema = {}
         data_schema["endpoint_type"] = selector({

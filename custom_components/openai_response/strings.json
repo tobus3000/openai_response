@@ -18,6 +18,9 @@
                 }
             }
         },
+        "abort": {
+            "single_instance_allowed": "[%key:common::config_flow::abort::single_instance_allowed%]"
+        },
         "error": {
             "openai_auth": "The OpenAI auth token is invalid.",
             "custom_llm_auth": "The custom LLM base URL is invalid.",

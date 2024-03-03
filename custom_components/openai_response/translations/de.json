@@ -18,6 +18,9 @@
                 }
             }
         },
+        "abort": {
+            "single_instance_allowed": "[%key:common::config_flow::abort::single_instance_allowed%]"
+        },
         "error": {
             "openai_auth": "Der OpenAI API Key ist ungültig.",
             "custom_llm_auth": "Die Adresse des LLM Endpunktes ist ungültig.",

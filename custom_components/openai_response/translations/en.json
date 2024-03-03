@@ -18,6 +18,9 @@
                 }
             }
         },
+        "abort": {
+            "single_instance_allowed": "[%key:common::config_flow::abort::single_instance_allowed%]"
+        },
         "error": {
             "openai_auth": "The OpenAI auth token is invalid.",
             "custom_llm_auth": "The custom LLM base URL is invalid.",
@@ -35,6 +38,8 @@
                     "temperature": "Float value that ranges from 0 to 1. Higher numbers should cause more unique responses.",
                     "max_tokens": "How many tokens to spend per response. Higher numbers might return longer and better responses."
                 }
+
+
             }
         },
         "error": {
