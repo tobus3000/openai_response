@@ -1,10 +1,5 @@
 {
     "config": {
-        "error": {
-            "openai_auth": "Der OpenAI API Key ist ungültig.",
-            "custom_llm_auth": "Die Adresse des LLM Endpunktes ist ungültig.",
-            "insufficient_quota": "Du hast dein API Kontingent überschritten. Bitte prüfe dein OpenAI Konto."
-        },
         "step": {
             "user": {
                 "title": "Wähle den Endpunkt Typ",
@@ -21,9 +16,18 @@
                     "api_key": "OpenAI API key",
                     "url": "Die URL zu dem OpenAI kompatiblen LLM. Bsp. http://localhost:1234/v1"
                 }
-            },
-            "details": {
-                "title": "Details",
+            }
+        },
+        "error": {
+            "openai_auth": "Der OpenAI API Key ist ungültig.",
+            "custom_llm_auth": "Die Adresse des LLM Endpunktes ist ungültig.",
+            "insufficient_quota": "Du hast dein API Kontingent überschritten. Bitte prüfe dein OpenAI Konto."
+        }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "title": "Endpunkt Konfiguration",
                 "description": "Optimiere den OpenAI Endpunkt.",
                 "data": {
                     "persona": "Ein kurzer Satz welcher den Assistent beschreibt.",
@@ -31,9 +35,10 @@
                     "temperature": "Wert von 0 bis 1 welcher definiert wie kreativ die Antwort sein darf. Höher = Kreativer",
                     "max_tokens": "Die maximale Anzahl tokens welche eine Antwort verbrauchen darf."
                 }
-
-
             }
+        },
+        "error": {
+
         }
     },
     "selector": {

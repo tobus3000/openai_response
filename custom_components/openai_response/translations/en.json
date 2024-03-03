@@ -1,10 +1,5 @@
 {
     "config": {
-        "error": {
-            "openai_auth": "The OpenAI auth token is invalid.",
-            "custom_llm_auth": "The custom LLM base URL is invalid.",
-            "insufficient_quota": "You exceeded your current quota, please check your OpenAI plan and billing details."
-        },
         "step": {
             "user": {
                 "title": "Select Endpoint Type",
@@ -21,9 +16,18 @@
                     "api_key": "OpenAI API key",
                     "url": "The base URL to the OpenAI compatible LLM. Eg. http://localhost:1234/v1"
                 }
-            },
-            "details": {
-                "title": "Configure Endpoint details",
+            }
+        },
+        "error": {
+            "openai_auth": "The OpenAI auth token is invalid.",
+            "custom_llm_auth": "The custom LLM base URL is invalid.",
+            "insufficient_quota": "You exceeded your current quota, please check your OpenAI plan and billing details."
+        }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "title": "Endpoint configuration",
                 "description": "Fine-tune the OpenAI endpoint.",
                 "data": {
                     "persona": "A short sentence that describes the persona (mood) of the OpenAI model.",
@@ -31,9 +35,10 @@
                     "temperature": "Float value that ranges from 0 to 1. Higher numbers should cause more unique responses.",
                     "max_tokens": "How many tokens to spend per response. Higher numbers might return longer and better responses."
                 }
-
-
             }
+        },
+        "error": {
+
         }
     },
     "selector": {
