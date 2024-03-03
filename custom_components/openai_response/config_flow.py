@@ -151,7 +151,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         errors: Dict[str, str] = {}
 
         # Retrieve the options associated with the config entry
-        options = self.config_entry.data or {}
+        options = self.config_entry.options or {}
         if user_input is not None:
             _LOGGER.info(str(user_input))
 
