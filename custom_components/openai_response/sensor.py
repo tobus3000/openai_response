@@ -78,6 +78,16 @@ async def async_setup_entry(hass: core.HomeAssistant, config_entry: config_entri
     sensors = []
     async_add_entities(sensors, update_before_add=True)
 
+    sensor = OpenAIResponseSensor(**config_entry)
+    #text_input = OpenAIResponseTextInput(config_entry.data.get("text_input_name"))
+    text_input = OpenAIResponseTextInput("openai_input")
+    hass.data.setdefault(DOMAIN, {})
+    hass.data[DOMAIN][config_entry.entry_id] = (sensor, text_input)
+    hass.async_add_job(hass.config_entries.async_forward_entry_setup(config_entry, "sensor"))
+    hass.async_add_job(hass.config_entries.async_forward_entry_setup(config_entry, "text_input"))
+    return True
+
+
 def generate_openai_response_sync(client, model, prompt, temperature, max_tokens, top_p, frequency_penalty, presence_penalty):
     """Setup and return the chat completion."""
     return client.chat.completions.create(
