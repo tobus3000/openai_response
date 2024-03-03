@@ -165,6 +165,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             if not errors:
                 # Value of data will be set on the options property of our config_entry
                 # instance.
+                _LOGGER.debug("Saving OpenAI Response Sensor options: %s", user_input)
                 return self.async_create_entry(
                     title="OpenAI Response Sensor Options",
                     data=user_input,

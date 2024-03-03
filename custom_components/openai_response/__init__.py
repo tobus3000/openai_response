@@ -74,11 +74,16 @@ class OpenAIResponse(Entity):
         self.hass = hass
         self._config_listener: CALLBACK_TYPE | None = None
         self._update_events_listener: CALLBACK_TYPE | None = None
-        # self._config_listener = self.hass.bus.async_listen(
-        #     EVENT_CORE_CONFIG_UPDATE, self.async_generate_openai_response
-        # )
-        # self.update_location(initial=True)
-    
+        self._config_listener = self.hass.bus.async_listen(
+            EVENT_CORE_CONFIG_UPDATE, self.update_settings
+        )
+        self.update_settings(initial=True)
+
+    @callback
+    def update_settings(self, _: Event | None = None, initial: bool = False) -> None:
+        """Update settings."""
+        pass
+
     @callback
     def remove_listeners(self) -> None:
         """Remove listeners."""
@@ -89,8 +94,12 @@ class OpenAIResponse(Entity):
         #     self._update_events_listener()
         # if self._update_sun_position_listener:
         #     self._update_sun_position_listener()
-            
+
     @property
     def state(self) -> str:
         """Return state of the component."""
         return "Active"
+
+    @property
+    def hass(self) -> HomeAssistant:
+        return self.hass
