@@ -184,7 +184,7 @@ class OpenAIResponseSensor(SensorEntity):
             entry_type=DeviceEntryType.SERVICE,
         )
 
-        self._hass = openai_response.hass
+        self._hass = openai_response.hass()
         self._name = kwargs.get("name")
         self._client = kwargs.get("client")
         self._model = kwargs.get("model")

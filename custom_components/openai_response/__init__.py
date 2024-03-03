@@ -102,4 +102,5 @@ class OpenAIResponse(Entity):
 
     @property
     def hass(self) -> HomeAssistant:
+        """Return the hass object."""
         return self.hass
