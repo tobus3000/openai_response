@@ -69,10 +69,10 @@ class OpenAIResponseSensorEntityDescription(SensorEntityDescription):
 
 SENSOR_TYPES: tuple[OpenAIResponseSensorEntityDescription, ...] = (
     OpenAIResponseSensorEntityDescription(
-        key="text",
+        key="response",
         #device_class=SensorDeviceClass.TIMESTAMP,
-        #translation_key="response_text",
-        value_fn=lambda data: data.response_text,
+        translation_key="response",
+        value_fn=lambda data: data._response_text,
         signal=SIGNAL_EVENTS_CHANGED,
     ),
 )
@@ -85,7 +85,6 @@ async def async_setup_entry(
     """Setup sensors from a config entry created in the integrations UI."""
     openai_response: OpenAIResponse = hass.data[DOMAIN]
     config = entry.as_dict()
-    _LOGGER.debug("OpenAI config_entry: %s", config)
     if config['data'].get('endpoint_type') == "custom":
         client = OpenAI(
             base_url=config['data'].get("url"),
@@ -109,7 +108,7 @@ async def async_setup_entry(
     config = hass.data[DOMAIN][entry.entry_id]
     if entry.options:
         config.update(entry.options)
-    _LOGGER.debug("Full Config: %s", config)
+    _LOGGER.debug("Full OpenAI Sensor Config: %s", config)
 
     async_add_entities(
         [
@@ -122,10 +121,6 @@ async def async_setup_entry(
             ) for description in SENSOR_TYPES
         ]
     )
-    # entities = [
-    #     OpenAIResponseSensor(**config)
-    # ]
-    # async_add_entities(entities, update_before_add=True)
 
 def generate_openai_response_sync(
         client,
@@ -154,7 +149,7 @@ class OpenAIResponseSensor(SensorEntity):
 
     #def __init__(self, **kwargs):
     def __init__(
-        self, 
+        self,
         hass,
         openai_response: OpenAIResponse,
         entity_description: OpenAIResponseSensorEntityDescription,
