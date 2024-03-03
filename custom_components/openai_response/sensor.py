@@ -7,10 +7,12 @@ from dataclasses import dataclass
 from openai import OpenAI
 import voluptuous as vol
 from datetime import datetime
-from homeassistant import config_entries, core
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceEntryType, DeviceInfo
 from homeassistant.helpers.typing import StateType
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.components.sensor import (
     PLATFORM_SCHEMA,
     SensorDeviceClass,
@@ -96,22 +98,39 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
         "temperature": config[CONF_TEMPERATURE],
         "max_tokens": config[CONF_MAX_TOKENS]
     }
+    # sun: Sun = hass.data[DOMAIN]
 
+    # async_add_entities(
+    #     [OpenAIResponseSensor(sun, description, entry.entry_id) for description in SENSOR_TYPES]
+    # )
     async_add_entities(
         [OpenAIResponseSensor(**sensor_config)],
         True
     )
 
-async def async_setup_entry(hass: core.HomeAssistant, config_entry: config_entries.ConfigEntry, async_add_entities) -> None:
+#async def async_setup_entry(hass: core.HomeAssistant, config_entry: config_entries.ConfigEntry, async_add_entities) -> None:
+async def async_setup_entry(
+    hass: HomeAssistant,
+    entry: ConfigEntry,
+    async_add_entities: AddEntitiesCallback
+) -> None:
     """Setup sensors from a config entry created in the integrations UI."""
-    config = hass.data[DOMAIN][config_entry.entry_id]
-    if config_entry.options:
-        config.update(config_entry.options)
-    _LOGGER.info(config)
-    entities = [
-        OpenAIResponseSensor(**config)
-    ]
-    async_add_entities(entities, update_before_add=True)
+    openai_response: OpenAIResponse = hass.data[DOMAIN]
+
+    async_add_entities(
+        [OpenAIResponseSensor(openai_response, description, entry.entry_id, **entry) for description in SENSOR_TYPES]
+    )
+
+    
+    # config = hass.data[DOMAIN][config_entry.entry_id]
+    # if config_entry.options:
+    #     config.update(config_entry.options)
+    # _LOGGER.info(config)
+    
+    # entities = [
+    #     OpenAIResponseSensor(**config)
+    # ]
+    # async_add_entities(entities, update_before_add=True)
 
 def generate_openai_response_sync(client, model, prompt, temperature, max_tokens, top_p, frequency_penalty, presence_penalty):
     """Setup and return the chat completion."""
