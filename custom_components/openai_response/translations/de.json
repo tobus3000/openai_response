@@ -46,5 +46,10 @@
             "openai": "OpenAI",
             "custom": "Eigenes LLM"
         }
+    },
+    "system_health": {
+        "info": {
+          "can_reach_server": "Erreiche OpenAI server"
+        }
     }
 }

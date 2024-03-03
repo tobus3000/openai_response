@@ -46,5 +46,10 @@
             "openai": "OpenAI",
             "custom": "Custom"
         }
+    },
+    "system_health": {
+        "info": {
+          "can_reach_server": "Reach OpenAI server"
+        }
     }
 }
