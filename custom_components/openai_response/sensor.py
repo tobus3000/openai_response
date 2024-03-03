@@ -69,9 +69,9 @@ class OpenAIResponseSensorEntityDescription(SensorEntityDescription):
 
 SENSOR_TYPES: tuple[OpenAIResponseSensorEntityDescription, ...] = (
     OpenAIResponseSensorEntityDescription(
-        key="response",
+        key="hassio_openai",
         #device_class=SensorDeviceClass.TIMESTAMP,
-        translation_key="response",
+        translation_key="hassio_openai_response",
         value_fn=lambda data: data._response_text,
         signal=SIGNAL_EVENTS_CHANGED,
     ),
