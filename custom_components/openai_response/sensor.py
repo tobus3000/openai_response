@@ -122,39 +122,47 @@ async def async_setup_entry(
             base_url=config['data'].get("url"),
             api_key=config['data'].get("api_key")
         )
-    
+
     sensor_config = {
         "name": config['data'].get("name"),
         "client": client,
-        "model": config['data'].get("model")
-        
+        "model": config['data'].get("model"),
+        "persona": config['options'].get("persona", DEFAULT_PERSONA),
+        "temperature": config['options'].get("temperature", DEFAULT_TEMPERATURE),
+        "max_tokens": config['options'].get("max_tokens", DEFAULT_MAX_TOKENS)
     }
-    # sensor_config = {
-    #     "name": config[CONF_NAME],
-    #     "client": client,
-    #     "keep_history": config[CONF_KEEPHISTORY],
-    #     "model": config[CONF_MODEL],
-    #     "persona": config[CONF_PERSONA],
-    #     "temperature": config[CONF_TEMPERATURE],
-    #     "max_tokens": config[CONF_MAX_TOKENS]
-    # }
-    
+
     config = hass.data[DOMAIN][entry.entry_id]
     if entry.options:
         config.update(entry.options)
     _LOGGER.debug("Full Config: %s", config)
-    
+
     async_add_entities(
-        [OpenAIResponseSensor(hass, openai_response, description, entry.entry_id, **sensor_config) for description in SENSOR_TYPES]
+        [
+            OpenAIResponseSensor(
+                hass,
+                openai_response,
+                description,
+                entry.entry_id,
+                **sensor_config
+            ) for description in SENSOR_TYPES
+        ]
     )
-    
-    
     # entities = [
     #     OpenAIResponseSensor(**config)
     # ]
     # async_add_entities(entities, update_before_add=True)
 
-def generate_openai_response_sync(client, model, prompt, temperature, max_tokens, top_p, frequency_penalty, presence_penalty):
+def generate_openai_response_sync(
+        client,
+        model,
+        prompt,
+        temperature,
+        max_tokens,
+        top_p,
+        frequency_penalty,
+        presence_penalty
+    ):
     """Setup and return the chat completion."""
     return client.chat.completions.create(
         model=model,
@@ -267,7 +275,7 @@ class OpenAIResponseSensor(SensorEntity):
 
     async def async_added_to_hass(self):
         """Listen for state change of `input_text.gpt_input` entity."""
-        _LOGGER.debug(self)
+        _LOGGER.debug("Register OpenAI signals: %s", self.entity_description.signal)
         await super().async_added_to_hass()
         self.async_on_remove(
             async_dispatcher_connect(
