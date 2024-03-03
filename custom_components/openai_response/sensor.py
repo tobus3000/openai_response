@@ -247,6 +247,7 @@ class OpenAIResponseSensor(SensorEntity):
             self.async_write_ha_state()
             if self._keep_history:
                 self._history.append({"role": "assistant", "content": self._response_text})
+            self._state = STATE_IDLE
 
     async def async_added_to_hass(self):
         """Listen for state change of `input_text.gpt_input` entity."""
