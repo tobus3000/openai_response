@@ -71,7 +71,7 @@ class OpenAIResponse(Entity):
 
     def __init__(self, hass: HomeAssistant) -> None:
         """Initialize the OpenAIResponse."""
-        self.hass = hass
+        self._hass = hass
         self._config_listener: CALLBACK_TYPE | None = None
         self._update_events_listener: CALLBACK_TYPE | None = None
         self._config_listener = self.hass.bus.async_listen(
@@ -103,4 +103,4 @@ class OpenAIResponse(Entity):
     @property
     def hass(self) -> HomeAssistant:
         """Return the hass object."""
-        return self.hass
+        return self._hass
