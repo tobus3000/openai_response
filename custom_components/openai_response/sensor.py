@@ -178,7 +178,7 @@ class OpenAIResponseSensor(SensorEntity):
         pass
         # self.async_on_remove(
             # self._hass.helpers.event.async_track_state_change(
-            #     "input_text.gpt_input", self.async_generate_openai_response
+            #     "input_text.openai_response_input", self.async_generate_openai_response
             # )
         # )
 
