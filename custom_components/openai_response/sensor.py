@@ -84,7 +84,7 @@ async def async_setup_entry(hass: core.HomeAssistant, config_entry: config_entri
     hass.data.setdefault(DOMAIN, {})
     hass.data[DOMAIN][config_entry.entry_id] = (sensor, text_input)
     hass.async_add_job(hass.config_entries.async_forward_entry_setup(config_entry, "sensor"))
-    hass.async_add_job(hass.config_entries.async_forward_entry_setup(config_entry, "text_input"))
+    hass.async_add_job(hass.config_entries.async_forward_entry_setup(config_entry, "input_text"))
     return True
 
 
