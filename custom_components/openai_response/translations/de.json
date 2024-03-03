@@ -2,7 +2,8 @@
     "config": {
         "error": {
             "openai_auth": "Der OpenAI API Key ist ungültig.",
-            "custom_llm_auth": "Die Adresse des LLM Endpunktes ist ungültig."
+            "custom_llm_auth": "Die Adresse des LLM Endpunktes ist ungültig.",
+            "insufficient_quota": "Du hast dein API Kontingent überschritten. Bitte prüfe dein OpenAI Konto."
         },
         "step": {
             "user": {

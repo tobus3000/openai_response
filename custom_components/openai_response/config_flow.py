@@ -46,7 +46,7 @@ CUSTOM_LLM_SCHEMA = vol.Schema(
     }
 )
 
-DETAILS_SCHEMA = vol.Schema(
+OPTIONS_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_PERSONA, default=DEFAULT_PERSONA): cv.string,
         vol.Required(CONF_KEEPHISTORY, default=DEFAULT_KEEP_HISTORY): cv.boolean,
@@ -133,7 +133,12 @@ class OpenAIResponseCustomConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     await validate_custom_llm(user_input[CONF_URL])
                 except ValueError:
                     errors["base"] = "custom_llm_auth"
-        
+
+            if not errors:
+                cfg_data = self.user_info
+                cfg_data.update(user_input)
+                return self.async_create_entry(title="OpenAI Response", data=cfg_data)
+
         if self.user_info[CONF_ENDPOINT_TYPE] == "openai":
             return self.async_show_form(
                 step_id="setup", data_schema=OPENAI_SCHEMA, errors=errors
@@ -143,44 +148,44 @@ class OpenAIResponseCustomConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 step_id="setup", data_schema=CUSTOM_LLM_SCHEMA, errors=errors
             )
 
-    async def async_step_details(self, user_input: Optional[Dict[str, Any]] = None):
-        """Second step in config flow to settup openai details."""
-        errors: Dict[str, str] = {}
-        if user_input is not None:
-            # Validate the path.
-            # try:
-            #     await validate_path(
-            #         user_input[CONF_PATH], self.data[CONF_ACCESS_TOKEN], self.hass
-            #     )
-            # except ValueError:
-            #     errors["base"] = "invalid_path"
+    # async def async_step_details(self, user_input: Optional[Dict[str, Any]] = None):
+    #     """Second step in config flow to settup openai details."""
+    #     errors: Dict[str, str] = {}
+    #     if user_input is not None:
+    #         # Validate the path.
+    #         # try:
+    #         #     await validate_path(
+    #         #         user_input[CONF_PATH], self.data[CONF_ACCESS_TOKEN], self.hass
+    #         #     )
+    #         # except ValueError:
+    #         #     errors["base"] = "invalid_path"
 
-            if not errors:
-                # Input is valid, set data.
-                self.data[CONF_PERSONA] = user_input[CONF_PERSONA]
-                self.data[CONF_KEEPHISTORY] = user_input[CONF_KEEPHISTORY]
-                self.data[CONF_TEMPERATURE] = user_input[CONF_TEMPERATURE]
-                self.data[CONF_MAX_TOKENS] = user_input[CONF_MAX_TOKENS]
+    #         if not errors:
+    #             # Input is valid, set data.
+    #             self.data[CONF_PERSONA] = user_input[CONF_PERSONA]
+    #             self.data[CONF_KEEPHISTORY] = user_input[CONF_KEEPHISTORY]
+    #             self.data[CONF_TEMPERATURE] = user_input[CONF_TEMPERATURE]
+    #             self.data[CONF_MAX_TOKENS] = user_input[CONF_MAX_TOKENS]
 
-                # User is done with entering settings, create the config entry.
-                return self.async_create_entry(title="OpenAI Response", data=self.data)
+    #             # User is done with entering settings, create the config entry.
+    #             return self.async_create_entry(title="OpenAI Response", data=self.data)
 
-        return self.async_show_form(
-            step_id="details", data_schema=DETAILS_SCHEMA, errors=errors
-        )
+    #     return self.async_show_form(
+    #         step_id="details", data_schema=DETAILS_SCHEMA, errors=errors
+    #     )
 
-    # @staticmethod
-    # @callback
-    # def async_get_options_flow(config_entry):
-    #     """Get the options flow for this handler."""
-    #     return OptionsFlowHandler(config_entry)
+    @staticmethod
+    @callback
+    def async_get_options_flow(config_entry):
+        """Get the options flow for this handler."""
+        return OptionsFlowHandler(config_entry)
 
 
-# class OptionsFlowHandler(config_entries.OptionsFlow):
-#     """Handles options flow for the component."""
+class OptionsFlowHandler(config_entries.OptionsFlow):
+    """Handles options flow for the component."""
 
-#     def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
-#         self.config_entry = config_entry
+    def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
+        self.config_entry = config_entry
 
 #     async def async_step_init(
 #         self, user_input: Dict[str, Any] = None

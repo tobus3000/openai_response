@@ -2,7 +2,8 @@
     "config": {
         "error": {
             "openai_auth": "The OpenAI auth token is invalid.",
-            "custom_llm_auth": "The custom LLM base URL is invalid."
+            "custom_llm_auth": "The custom LLM base URL is invalid.",
+            "insufficient_quota": "You exceeded your current quota, please check your OpenAI plan and billing details."
         },
         "step": {
             "user": {
