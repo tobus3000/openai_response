@@ -75,8 +75,10 @@ async def async_setup_entry(hass: core.HomeAssistant, config_entry: config_entri
     if config_entry.options:
         config.update(config_entry.options)
     _LOGGER.info(config)
-    sensor = OpenAIResponseSensor(**config)
-    async_add_entities(sensor, update_before_add=True)
+    entities = [
+        OpenAIResponseSensor(**config)
+    ]
+    async_add_entities(entities, update_before_add=True)
 
 def generate_openai_response_sync(client, model, prompt, temperature, max_tokens, top_p, frequency_penalty, presence_penalty):
     """Setup and return the chat completion."""
