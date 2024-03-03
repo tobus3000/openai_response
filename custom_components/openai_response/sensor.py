@@ -5,7 +5,7 @@ import logging
 from openai import OpenAI
 import voluptuous as vol
 from homeassistant import config_entries, core
-from homeassistant.components.sensor import PLATFORM_SCHEMA, SensorEntity
+from homeassistant.components.sensor import PLATFORM_SCHEMA, SensorEntity, Entity
 from homeassistant.const import CONF_API_KEY, CONF_NAME, CONF_URL
 from .const import (
     DOMAIN,
@@ -180,3 +180,29 @@ class OpenAIResponseSensor(SensorEntity):
     async def async_update(self):
         """Currently unused..."""
         pass
+
+class OpenAIResponseTextInput(Entity):
+    """Representation of a custom text input."""
+
+    def __init__(self, name):
+        """Initialize the text input."""
+        self._name = name
+        self._state = None
+
+    @property
+    def name(self):
+        """Return the name of the text input."""
+        return self._name
+
+    @property
+    def state(self):
+        """Return the state of the text input."""
+        return self._state
+
+    async def async_set_text(self, text):
+        """Set the text input value."""
+        self._state = text
+
+    async def async_clear_text(self):
+        """Clear the text input value."""
+        self._state = None
