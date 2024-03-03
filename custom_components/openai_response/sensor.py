@@ -76,36 +76,31 @@ SENSOR_TYPES: tuple[OpenAIResponseSensorEntityDescription, ...] = (
     ),
 )
 
-async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
-    """Setup basic OpenAI session."""
-    api_base = config.get(CONF_URL)
-    api_key = config[CONF_API_KEY]
-    if api_base != "":
-        client = OpenAI(base_url=api_base, api_key=api_key)
-    elif api_key != "nokey":
-        client = OpenAI(api_key=api_key)
-    else:
-        _LOGGER.error("You must either set an 'api_key' or the 'api_base' for the openai_response sensor.")
+# async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
+#     """Setup basic OpenAI session."""
+#     api_base = config.get(CONF_URL)
+#     api_key = config[CONF_API_KEY]
+#     if api_base != "":
+#         client = OpenAI(base_url=api_base, api_key=api_key)
+#     elif api_key != "nokey":
+#         client = OpenAI(api_key=api_key)
+#     else:
+#         _LOGGER.error("You must either set an 'api_key' or the 'api_base' for the openai_response sensor.")
 
-    sensor_config = {
-        "hass": hass,
-        "name": config[CONF_NAME],
-        "client": client,
-        "keep_history": config[CONF_KEEPHISTORY],
-        "model": config[CONF_MODEL],
-        "persona": config[CONF_PERSONA],
-        "temperature": config[CONF_TEMPERATURE],
-        "max_tokens": config[CONF_MAX_TOKENS]
-    }
-    # sun: Sun = hass.data[DOMAIN]
-
+#     sensor_config = {
+#         "hass": hass,
+#         "name": config[CONF_NAME],
+#         "client": client,
+#         "keep_history": config[CONF_KEEPHISTORY],
+#         "model": config[CONF_MODEL],
+#         "persona": config[CONF_PERSONA],
+#         "temperature": config[CONF_TEMPERATURE],
+#         "max_tokens": config[CONF_MAX_TOKENS]
+#     }
     # async_add_entities(
-    #     [OpenAIResponseSensor(sun, description, entry.entry_id) for description in SENSOR_TYPES]
+    #     [OpenAIResponseSensor(**sensor_config)],
+    #     True
     # )
-    async_add_entities(
-        [OpenAIResponseSensor(**sensor_config)],
-        True
-    )
 
 #async def async_setup_entry(hass: core.HomeAssistant, config_entry: config_entries.ConfigEntry, async_add_entities) -> None:
 async def async_setup_entry(
@@ -118,14 +113,21 @@ async def async_setup_entry(
     config = entry.as_dict()
     _LOGGER.debug("config_entry: %s", config)
     if config['data'].get('endpoint_type') == "custom":
-        api_key = "nokey"
+        client = OpenAI(
+            base_url=config['data'].get("url"),
+            api_key="nokey"
+        )
     else:
-        api_key = "" #TODO: get api_key from options
+        client = OpenAI(
+            base_url=config['data'].get("url"),
+            api_key=config['data'].get("api_key")
+        )
+    
     sensor_config = {
         "name": config['data'].get("name"),
-        "model": config['data'].get("model"),
-        "url": config['data'].get("url"),
-        "api_key": api_key
+        "client": client,
+        "model": config['data'].get("model")
+        
     }
     # sensor_config = {
     #     "name": config[CONF_NAME],
@@ -182,7 +184,8 @@ class OpenAIResponseSensor(SensorEntity):
             entry_type=DeviceEntryType.SERVICE,
         )
 
-        self._hass = kwargs.get("hass")
+        self._hass = openai_response["hass"]
+
         self._name = kwargs.get("name")
         self._client = kwargs.get("client")
         self._model = kwargs.get("model")
