@@ -69,23 +69,23 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
         True
     )
 
-async def async_setup_entry(hass: core.HomeAssistant, config_entry: config_entries.ConfigEntry, async_add_entities) -> None:
-    """Setup sensors from a config entry created in the integrations UI."""
-    config = hass.data[DOMAIN][config_entry.entry_id]
-    if config_entry.options:
-        config.update(config_entry.options)
-    _LOGGER.info(config)
-    # sensors = []
-    # async_add_entities(sensors, update_before_add=True)
+# async def async_setup_entry(hass: core.HomeAssistant, config_entry: config_entries.ConfigEntry, async_add_entities) -> None:
+#     """Setup sensors from a config entry created in the integrations UI."""
+#     config = hass.data[DOMAIN][config_entry.entry_id]
+#     if config_entry.options:
+#         config.update(config_entry.options)
+#     _LOGGER.info(config)
+#     # sensors = []
+#     # async_add_entities(sensors, update_before_add=True)
 
-    sensor = OpenAIResponseSensor(**config)
-    #text_input = OpenAIResponseTextInput(config_entry.data.get("text_input_name"))
-    text_input = OpenAIResponseTextInput("openai_input")
-    hass.data.setdefault(DOMAIN, {})
-    hass.data[DOMAIN][config_entry.entry_id] = (sensor, text_input)
-    hass.async_add_job(hass.config_entries.async_forward_entry_setup(config_entry, "sensor"))
-    hass.async_add_job(hass.config_entries.async_forward_entry_setup(config_entry, "input_text"))
-    return True
+#     sensor = OpenAIResponseSensor(**config)
+#     #text_input = OpenAIResponseTextInput(config_entry.data.get("text_input_name"))
+#     text_input = OpenAIResponseTextInput("openai_input")
+#     hass.data.setdefault(DOMAIN, {})
+#     hass.data[DOMAIN][config_entry.entry_id] = (sensor, text_input)
+#     hass.async_add_job(hass.config_entries.async_forward_entry_setup(config_entry, "sensor"))
+#     hass.async_add_job(hass.config_entries.async_forward_entry_setup(config_entry, "input_text"))
+#     return True
 
 
 def generate_openai_response_sync(client, model, prompt, temperature, max_tokens, top_p, frequency_penalty, presence_penalty):

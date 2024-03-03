@@ -25,6 +25,9 @@ async def async_setup_entry(
     hass.async_create_task(
         hass.config_entries.async_forward_entry_setup(entry, "sensor")
     )
+    hass.async_create_task(
+        hass.config_entries.async_forward_entry_setup(entry, "input_text")
+    )
     return True
 
 async def options_update_listener(
@@ -43,6 +46,7 @@ async def async_unload_entry(
     if unload_ok := await hass.config_entries.async_unload_platforms(entry, PLATFORMS):
         # Remove config entry from domain.
         entry_data = hass.data[DOMAIN].pop(entry.entry_id)
+        _LOGGER.debug(entry_data)
         # Remove options_update_listener.
         entry_data["unsub_options_update_listener"]()
 
