@@ -1,4 +1,3 @@
-#from copy import deepcopy
 import logging
 from typing import Any, Dict, Optional
 from openai import OpenAI
@@ -7,10 +6,6 @@ from homeassistant.const import CONF_API_KEY, CONF_NAME, CONF_URL
 from homeassistant.core import callback
 from homeassistant.helpers.selector import selector
 import homeassistant.helpers.config_validation as cv
-from homeassistant.helpers.entity_registry import (
-    async_entries_for_config_entry,
-    async_get,
-)
 import voluptuous as vol
 from .const import (
     DOMAIN,
@@ -142,38 +137,11 @@ class OpenAIResponseCustomConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 step_id="setup", data_schema=CUSTOM_LLM_SCHEMA, errors=errors
             )
 
-    # async def async_step_details(self, user_input: Optional[Dict[str, Any]] = None):
-    #     """Second step in config flow to settup openai details."""
-    #     errors: Dict[str, str] = {}
-    #     if user_input is not None:
-    #         # Validate the path.
-    #         # try:
-    #         #     await validate_path(
-    #         #         user_input[CONF_PATH], self.data[CONF_ACCESS_TOKEN], self.hass
-    #         #     )
-    #         # except ValueError:
-    #         #     errors["base"] = "invalid_path"
-
-    #         if not errors:
-    #             # Input is valid, set data.
-    #             self.data[CONF_PERSONA] = user_input[CONF_PERSONA]
-    #             self.data[CONF_KEEPHISTORY] = user_input[CONF_KEEPHISTORY]
-    #             self.data[CONF_TEMPERATURE] = user_input[CONF_TEMPERATURE]
-    #             self.data[CONF_MAX_TOKENS] = user_input[CONF_MAX_TOKENS]
-
-    #             # User is done with entering settings, create the config entry.
-    #             return self.async_create_entry(title="OpenAI Response", data=self.data)
-
-    #     return self.async_show_form(
-    #         step_id="details", data_schema=DETAILS_SCHEMA, errors=errors
-    #     )
-
     @staticmethod
     @callback
     def async_get_options_flow(config_entry):
         """Get the options flow for this handler."""
         return OptionsFlowHandler(config_entry)
-
 
 class OptionsFlowHandler(config_entries.OptionsFlow):
     """Handles options flow for the component."""

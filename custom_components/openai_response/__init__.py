@@ -4,6 +4,7 @@ import logging
 from homeassistant import config_entries, core
 from homeassistant.const import Platform
 from .const import DOMAIN
+from .config_flow import OpenAIResponseCustomConfigFlow
 _LOGGER = logging.getLogger(__name__)
 PLATFORMS = [Platform.SENSOR]
 
@@ -47,11 +48,14 @@ async def async_unload_entry(
 
     return unload_ok
 
+# async def async_get_options_flow(config_entry):
+#     """Get the options flow for this handler."""
+#     return OpenAIResponseCustomConfigFlow(config_entry)
 
 async def async_setup(
         hass: core.HomeAssistant,
         config: dict
     ) -> bool:
-    """Set up the GitHub Custom component from yaml configuration."""
-    hass.data.setdefault(DOMAIN, {})
+    """Set up the OpenAI Response Custom component from yaml configuration."""
+    hass.data.setdefault(DOMAIN, config)
     return True
