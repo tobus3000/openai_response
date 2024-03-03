@@ -1,6 +1,6 @@
 """Provide info to system health."""
-import logging
 from __future__ import annotations
+import logging
 from typing import Any
 
 #from accuweather.const import ENDPOINT
