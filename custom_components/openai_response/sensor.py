@@ -9,6 +9,7 @@ import voluptuous as vol
 from datetime import datetime
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.const import STATE_IDLE, STATE_BUFFERING, STATE_OK, STATE_PROBLEM
 from homeassistant.helpers.device_registry import DeviceEntryType, DeviceInfo
 from homeassistant.helpers.typing import StateType
 from homeassistant.helpers.event import async_track_state_change
@@ -218,7 +219,7 @@ class OpenAIResponseSensor(SensorEntity):
         """The main function that interacts with the OpenAPI server and returns the response."""
         new_text = new_state.state
         if new_text:
-            self._state = "waiting_for_response"
+            self._state = STATE_BUFFERING
             prompt = {"role": "user", "content": new_text}
             # Wipe history if keep_history is False.
             if not self._keep_history:
@@ -235,9 +236,14 @@ class OpenAIResponseSensor(SensorEntity):
                 0,
                 0
             )
-            self._response_text = response.choices[0].message.content
+            try:
+                self._response_text = response.choices[0].message.content
+            except:
+                self._state = STATE_PROBLEM
+            finally:
+                self._state = STATE_OK
+            
             _LOGGER.info(self._response_text)
-            self._state = "response_received"
             self.async_write_ha_state()
             if self._keep_history:
                 self._history.append({"role": "assistant", "content": self._response_text})
