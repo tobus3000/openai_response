@@ -96,6 +96,7 @@ class OpenAIResponseSensor(SensorEntity):
     """Defines the OpenAI Response Sensor object."""
 
     def __init__(self, **kwargs):
+        _LOGGER.debug(kwargs)
         self._hass = kwargs.get("hass")
         self._name = kwargs.get("name")
         self._client = kwargs.get("client")
@@ -173,11 +174,13 @@ class OpenAIResponseSensor(SensorEntity):
 
     async def async_added_to_hass(self):
         """Listen for state change of `input_text.gpt_input` entity."""
-        self.async_on_remove(
-            self._hass.helpers.event.async_track_state_change(
-                "input_text.gpt_input", self.async_generate_openai_response
-            )
-        )
+        _LOGGER.debug(self)
+        pass
+        # self.async_on_remove(
+            # self._hass.helpers.event.async_track_state_change(
+            #     "input_text.gpt_input", self.async_generate_openai_response
+            # )
+        # )
 
     async def async_update(self):
         """Currently unused..."""
