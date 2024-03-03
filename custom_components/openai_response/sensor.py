@@ -78,7 +78,7 @@ async def async_setup_entry(hass: core.HomeAssistant, config_entry: config_entri
     sensors = []
     async_add_entities(sensors, update_before_add=True)
 
-    sensor = OpenAIResponseSensor(**config_entry)
+    sensor = OpenAIResponseSensor(config_entry)
     #text_input = OpenAIResponseTextInput(config_entry.data.get("text_input_name"))
     text_input = OpenAIResponseTextInput("openai_input")
     hass.data.setdefault(DOMAIN, {})
