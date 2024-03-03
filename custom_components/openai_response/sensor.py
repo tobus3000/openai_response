@@ -11,6 +11,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceEntryType, DeviceInfo
 from homeassistant.helpers.typing import StateType
+from homeassistant.helpers.event import async_track_state_change
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.components.sensor import (
@@ -248,8 +249,10 @@ class OpenAIResponseSensor(SensorEntity):
 
     async def async_added_to_hass(self):
         """Listen for state change of `input_text.gpt_input` entity."""
-        _LOGGER.debug("Register OpenAI signals: %s", self.entity_description.signal)
         await super().async_added_to_hass()
+        async_track_state_change(
+            self._hass, "input_text.gpt_input", self.async_generate_openai_response
+        )
         self.async_on_remove(
             async_dispatcher_connect(
                 self._hass,
