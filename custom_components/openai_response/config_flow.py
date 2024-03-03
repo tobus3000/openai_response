@@ -41,15 +41,6 @@ CUSTOM_LLM_SCHEMA = vol.Schema(
     }
 )
 
-OPTIONS_SCHEMA = vol.Schema(
-    {
-        vol.Required(CONF_PERSONA, default=DEFAULT_PERSONA): cv.string,
-        vol.Required(CONF_KEEPHISTORY, default=DEFAULT_KEEP_HISTORY): cv.boolean,
-        vol.Optional(CONF_TEMPERATURE, default=DEFAULT_TEMPERATURE): cv.positive_float,
-        vol.Optional(CONF_MAX_TOKENS, default=DEFAULT_MAX_TOKENS): cv.positive_int
-    }
-)
-
 async def validate_openai_auth(api_key: str) -> None:
     """Validates OpenAI auth.
 
@@ -159,6 +150,8 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         """Manage the options for the custom component."""
         errors: Dict[str, str] = {}
 
+        # Retrieve the options associated with the config entry
+        options = self.config_entry.data or {}
         if user_input is not None:
             _LOGGER.info(str(user_input))
 
@@ -172,5 +165,14 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                 )
 
         return self.async_show_form(
-            step_id="init", data_schema=OPTIONS_SCHEMA, errors=errors
+            step_id="init",
+            data_schema=vol.Schema(
+                {
+                    vol.Required(CONF_PERSONA, default=options.get("persona", DEFAULT_PERSONA)): cv.string,
+                    vol.Required(CONF_KEEPHISTORY, default=options.get("keep_history", DEFAULT_KEEP_HISTORY)): cv.boolean,
+                    vol.Optional(CONF_TEMPERATURE, default=options.get("temperature", DEFAULT_TEMPERATURE)): cv.positive_float,
+                    vol.Optional(CONF_MAX_TOKENS, default=options.get("max_tokens", DEFAULT_MAX_TOKENS)): cv.positive_int
+                }
+            ),
+            errors=errors
         )
