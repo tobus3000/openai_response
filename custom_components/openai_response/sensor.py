@@ -68,7 +68,7 @@ class OpenAIResponseSensorEntityDescription(SensorEntityDescription):
 
 SENSOR_TYPES: tuple[OpenAIResponseSensorEntityDescription, ...] = (
     OpenAIResponseSensorEntityDescription(
-        key="response_text",
+        key="text",
         #device_class=SensorDeviceClass.TIMESTAMP,
         #translation_key="response_text",
         value_fn=lambda data: data.response_text,
@@ -115,10 +115,18 @@ async def async_setup_entry(
 ) -> None:
     """Setup sensors from a config entry created in the integrations UI."""
     openai_response: OpenAIResponse = hass.data[DOMAIN]
-    _LOGGER.debug("config_entry: %s", entry)
     config = entry.as_dict()
     _LOGGER.debug("config_entry: %s", config)
-    sensor_config = {}
+    if config['data'].get('endpoint_type') == "custom":
+        api_key = "nokey"
+    else:
+        api_key = "" #TODO: get api_key from options
+    sensor_config = {
+        "name": config['data'].get("name"),
+        "model": config['data'].get("model"),
+        "url": config['data'].get("url"),
+        "api_key": api_key
+    }
     # sensor_config = {
     #     "name": config[CONF_NAME],
     #     "client": client,
