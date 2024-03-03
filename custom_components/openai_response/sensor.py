@@ -138,15 +138,16 @@ async def async_setup_entry(
     #     "temperature": config[CONF_TEMPERATURE],
     #     "max_tokens": config[CONF_MAX_TOKENS]
     # }
-    async_add_entities(
-        [OpenAIResponseSensor(openai_response, description, entry.entry_id, **sensor_config) for description in SENSOR_TYPES]
-    )
-
     
-    # config = hass.data[DOMAIN][config_entry.entry_id]
-    # if config_entry.options:
-    #     config.update(config_entry.options)
-    # _LOGGER.info(config)
+    config = hass.data[DOMAIN][entry.entry_id]
+    if entry.options:
+        config.update(entry.options)
+    _LOGGER.debug("Full Config: %s", config)
+    
+    async_add_entities(
+        [OpenAIResponseSensor(hass, openai_response, description, entry.entry_id, **sensor_config) for description in SENSOR_TYPES]
+    )
+    
     
     # entities = [
     #     OpenAIResponseSensor(**config)
@@ -171,7 +172,12 @@ class OpenAIResponseSensor(SensorEntity):
 
     #def __init__(self, **kwargs):
     def __init__(
-        self, openai_response: OpenAIResponse, entity_description: OpenAIResponseSensorEntityDescription, entry_id: str, **kwargs
+        self, 
+        hass,
+        openai_response: OpenAIResponse,
+        entity_description: OpenAIResponseSensorEntityDescription,
+        entry_id: str,
+        **kwargs
     ) -> None:
         _LOGGER.debug(kwargs)
         self.entity_description = entity_description
@@ -184,7 +190,7 @@ class OpenAIResponseSensor(SensorEntity):
             entry_type=DeviceEntryType.SERVICE,
         )
 
-        self._hass = openai_response.hass
+        self._hass = hass
         self._name = kwargs.get("name")
         self._client = kwargs.get("client")
         self._model = kwargs.get("model")

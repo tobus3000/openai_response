@@ -99,8 +99,4 @@ class OpenAIResponse(Entity):
     def state(self) -> str:
         """Return state of the component."""
         return "Active"
-
-    @property
-    def hass(self) -> HomeAssistant:
-        """Return the hass object."""
-        return self._hass
+ 
