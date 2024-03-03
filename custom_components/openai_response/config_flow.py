@@ -55,12 +55,6 @@ OPTIONS_SCHEMA = vol.Schema(
     }
 )
 
-# OPTIONS_SHCEMA = vol.Schema(
-#     {
-#         vol.Optional(CONF_NAME, default="foo"): cv.string
-#     }
-# )
-
 async def validate_openai_auth(api_key: str) -> None:
     """Validates OpenAI auth.
 
@@ -187,74 +181,30 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
     def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
         self.config_entry = config_entry
 
-#     async def async_step_init(
-#         self, user_input: Dict[str, Any] = None
-#     ) -> Dict[str, Any]:
-#         """Manage the options for the custom component."""
-#         errors: Dict[str, str] = {}
-#         # Grab all configured repos from the entity registry so we can populate the
-#         # multi-select dropdown that will allow a user to remove a repo.
-#         entity_registry = async_get(self.hass)
-#         entries = async_entries_for_config_entry(
-#             entity_registry, self.config_entry.entry_id
-#         )
-#         # Default value for our multi-select.
-#         all_repos = {e.entity_id: e.original_name for e in entries}
-#         repo_map = {e.entity_id: e for e in entries}
+    async def async_step_init(
+        self, user_input: Dict[str, Any] = None
+    ) -> Dict[str, Any]:
+        """Manage the options for the custom component."""
+        errors: Dict[str, str] = {}
 
-#         if user_input is not None:
-#             updated_repos = deepcopy(self.config_entry.data[CONF_REPOS])
+        if user_input is not None:
+            _LOGGER.info(str(user_input))
 
-#             # Remove any unchecked repos.
-#             removed_entities = [
-#                 entity_id
-#                 for entity_id in repo_map.keys()
-#                 if entity_id not in user_input["repos"]
-#             ]
-#             for entity_id in removed_entities:
-#                 # Unregister from HA
-#                 entity_registry.async_remove(entity_id)
-#                 # Remove from our configured repos.
-#                 entry = repo_map[entity_id]
-#                 entry_path = entry.unique_id
-#                 updated_repos = [e for e in updated_repos if e["path"] != entry_path]
 
-#             if user_input.get(CONF_PATH):
-#                 # Validate the path.
-#                 access_token = self.hass.data[DOMAIN][self.config_entry.entry_id][
-#                     CONF_ACCESS_TOKEN
-#                 ]
-#                 try:
-#                     await validate_path(user_input[CONF_PATH], access_token, self.hass)
-#                 except ValueError:
-#                     errors["base"] = "invalid_path"
+        # vol.Required(CONF_PERSONA, default=DEFAULT_PERSONA): cv.string,
+        # vol.Required(CONF_KEEPHISTORY, default=DEFAULT_KEEP_HISTORY): cv.boolean,
+        # vol.Optional(CONF_TEMPERATURE, default=DEFAULT_TEMPERATURE): cv.positive_float,
+        # vol.Optional(CONF_MAX_TOKENS, default=DEFAULT_MAX_TOKENS): cv.positive_int
 
-#                 if not errors:
-#                     # Add the new repo.
-#                     updated_repos.append(
-#                         {
-#                             "path": user_input[CONF_PATH],
-#                             "name": user_input.get(CONF_NAME, user_input[CONF_PATH]),
-#                         }
-#                     )
 
-#             if not errors:
-#                 # Value of data will be set on the options property of our config_entry
-#                 # instance.
-#                 return self.async_create_entry(
-#                     title="",
-#                     data={CONF_REPOS: updated_repos},
-#                 )
+            if not errors:
+                # Value of data will be set on the options property of our config_entry
+                # instance.
+                return self.async_create_entry(
+                    title="",
+                    data={},
+                )
 
-#         options_schema = vol.Schema(
-#             {
-#                 vol.Optional("repos", default=list(all_repos.keys())): cv.multi_select(
-#                     all_repos
-#                 ),
-#                 vol.Optional(CONF_PATH): cv.string,
-#                 vol.Optional(CONF_NAME): cv.string,
-#             }
-#         )
-#         return self.async_show_form(
-#             step_id="init", data_schema=options_schema, errors=errors
-#         )
+        return self.async_show_form(
+            step_id="init", data_schema=OPTIONS_SCHEMA, errors=errors
+        )
