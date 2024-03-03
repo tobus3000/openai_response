@@ -169,3 +169,7 @@ class OpenAIResponseSensor(SensorEntity):
     async def async_update(self):
         """Currently unused..."""
         pass
+
+    async def async_setup_entry(self):
+        """Currently unused..."""
+        pass

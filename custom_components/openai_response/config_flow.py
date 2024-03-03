@@ -182,7 +182,8 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         self.config_entry = config_entry
 
     async def async_step_init(
-        self, user_input: Dict[str, Any] = None
+        self,
+        user_input: Dict[str, Any] = None
     ) -> Dict[str, Any]:
         """Manage the options for the custom component."""
         errors: Dict[str, str] = {}
@@ -190,19 +191,12 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         if user_input is not None:
             _LOGGER.info(str(user_input))
 
-
-        # vol.Required(CONF_PERSONA, default=DEFAULT_PERSONA): cv.string,
-        # vol.Required(CONF_KEEPHISTORY, default=DEFAULT_KEEP_HISTORY): cv.boolean,
-        # vol.Optional(CONF_TEMPERATURE, default=DEFAULT_TEMPERATURE): cv.positive_float,
-        # vol.Optional(CONF_MAX_TOKENS, default=DEFAULT_MAX_TOKENS): cv.positive_int
-
-
             if not errors:
                 # Value of data will be set on the options property of our config_entry
                 # instance.
                 return self.async_create_entry(
                     title="",
-                    data={},
+                    data=user_input,
                 )
 
         return self.async_show_form(
