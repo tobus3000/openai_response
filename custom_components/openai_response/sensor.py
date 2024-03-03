@@ -4,9 +4,11 @@ OpenAI Response - Sensor
 import logging
 from openai import OpenAI
 import voluptuous as vol
+from homeassistant import config_entries, core
 from homeassistant.components.sensor import PLATFORM_SCHEMA, SensorEntity
 from homeassistant.const import CONF_API_KEY, CONF_NAME, CONF_URL
 from .const import (
+    DOMAIN,
     CONF_MODEL,
     CONF_PERSONA,
     CONF_KEEPHISTORY,
@@ -66,6 +68,15 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
         [OpenAIResponseSensor(**sensor_config)],
         True
     )
+
+async def async_setup_entry(hass: core.HomeAssistant, config_entry: config_entries.ConfigEntry, async_add_entities) -> None:
+    """Setup sensors from a config entry created in the integrations UI."""
+    config = hass.data[DOMAIN][config_entry.entry_id]
+    if config_entry.options:
+        config.update(config_entry.options)
+    _LOGGER.info(config)
+    sensors = []
+    async_add_entities(sensors, update_before_add=True)
 
 def generate_openai_response_sync(client, model, prompt, temperature, max_tokens, top_p, frequency_penalty, presence_penalty):
     """Setup and return the chat completion."""
@@ -167,9 +178,5 @@ class OpenAIResponseSensor(SensorEntity):
         )
 
     async def async_update(self):
-        """Currently unused..."""
-        pass
-
-    async def async_setup_entry(self):
         """Currently unused..."""
         pass
