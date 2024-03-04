@@ -2,7 +2,7 @@
 import logging
 from homeassistant import config_entries
 from homeassistant.core import CALLBACK_TYPE, Event, HomeAssistant, callback
-from homeassistant.const import Platform, EVENT_CORE_CONFIG_UPDATE
+from homeassistant.const import Platform, EVENT_CORE_CONFIG_UPDATE, STATE_OK
 from homeassistant.helpers.entity import Entity
 from .const import DOMAIN
 from .config_flow import OpenAIResponseCustomConfigFlow
@@ -59,6 +59,15 @@ async def async_unload_entry(
         entry_data["unsub_options_update_listener"]()
 
     return unload_ok
+
+async def async_get_system_health_info(hass: HomeAssistant):
+    """Return information for the system health panel."""
+    # Define your custom health info here
+    health_info = {}
+    custom_component_info = {}
+    custom_component_info['status'] = STATE_OK
+    health_info['OpenAI Response Sensor'] = custom_component_info
+    return health_info
 
 # async def async_get_options_flow(config_entry):
 #     """Get the options flow for this handler."""
