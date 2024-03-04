@@ -163,4 +163,3 @@ class OpenAIResponse(Entity):
     def state(self) -> str:
         """Return state of the component."""
         return "Active"
- 
