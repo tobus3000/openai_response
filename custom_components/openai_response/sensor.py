@@ -4,17 +4,17 @@ OpenAI Response - Sensor
 import logging
 from collections.abc import Callable
 from dataclasses import dataclass
-from openai import OpenAI
+# from openai import OpenAI
 import voluptuous as vol
 from datetime import datetime
-from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant
+# from homeassistant.config_entries import ConfigEntry
+# from homeassistant.core import HomeAssistant
 from homeassistant.const import STATE_IDLE, STATE_BUFFERING, STATE_OK, STATE_PROBLEM
 from homeassistant.helpers.device_registry import DeviceEntryType, DeviceInfo
 from homeassistant.helpers.typing import StateType
 from homeassistant.helpers.event import async_track_state_change
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
+# from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.components.sensor import (
     PLATFORM_SCHEMA,
     SensorDeviceClass,
@@ -78,50 +78,50 @@ SENSOR_TYPES: tuple[OpenAIResponseSensorEntityDescription, ...] = (
     ),
 )
 
-async def async_setup_entry(
-    hass: HomeAssistant,
-    entry: ConfigEntry,
-    async_add_entities: AddEntitiesCallback
-) -> None:
-    """Setup sensors from a config entry created in the integrations UI."""
-    openai_response: OpenAIResponse = hass.data[DOMAIN]
-    config = entry.as_dict()
-    if config['data'].get('endpoint_type') == "custom":
-        client = OpenAI(
-            base_url=config['data'].get("url"),
-            api_key="nokey"
-        )
-    else:
-        client = OpenAI(
-            base_url=config['data'].get("url"),
-            api_key=config['data'].get("api_key")
-        )
+# async def async_setup_entry(
+#     hass: HomeAssistant,
+#     entry: ConfigEntry,
+#     async_add_entities: AddEntitiesCallback
+# ) -> None:
+#     """Setup sensors from a config entry created in the integrations UI."""
+#     openai_response: OpenAIResponse = hass.data[DOMAIN]
+#     config = entry.as_dict()
+#     if config['data'].get('endpoint_type') == "custom":
+#         client = OpenAI(
+#             base_url=config['data'].get("url"),
+#             api_key="nokey"
+#         )
+#     else:
+#         client = OpenAI(
+#             base_url=config['data'].get("url"),
+#             api_key=config['data'].get("api_key")
+#         )
 
-    sensor_config = {
-        "name": config['data'].get("name"),
-        "client": client,
-        "model": config['data'].get("model"),
-        "persona": config['options'].get("persona", DEFAULT_PERSONA),
-        "temperature": config['options'].get("temperature", DEFAULT_TEMPERATURE),
-        "max_tokens": config['options'].get("max_tokens", DEFAULT_MAX_TOKENS)
-    }
+#     sensor_config = {
+#         "name": config['data'].get("name"),
+#         "client": client,
+#         "model": config['data'].get("model"),
+#         "persona": config['options'].get("persona", DEFAULT_PERSONA),
+#         "temperature": config['options'].get("temperature", DEFAULT_TEMPERATURE),
+#         "max_tokens": config['options'].get("max_tokens", DEFAULT_MAX_TOKENS)
+#     }
 
-    config = hass.data[DOMAIN][entry.entry_id]
-    if entry.options:
-        config.update(entry.options)
-    _LOGGER.debug("Full OpenAI Sensor Config: %s", config)
+#     config = hass.data[DOMAIN][entry.entry_id]
+#     if entry.options:
+#         config.update(entry.options)
+#     _LOGGER.debug("Full OpenAI Sensor Config: %s", config)
 
-    async_add_entities(
-        [
-            OpenAIResponseSensor(
-                hass,
-                openai_response,
-                description,
-                entry.entry_id,
-                **sensor_config
-            ) for description in SENSOR_TYPES
-        ]
-    )
+#     async_add_entities(
+#         [
+#             OpenAIResponseSensor(
+#                 hass,
+#                 openai_response,
+#                 description,
+#                 entry.entry_id,
+#                 **sensor_config
+#             ) for description in SENSOR_TYPES
+#         ]
+#     )
 
 def generate_openai_response_sync(
         client,
