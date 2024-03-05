@@ -14,6 +14,7 @@ from .sensor import OpenAIResponseSensor, SENSOR_TYPES
 from .entities import OpenAIResponseTextInput, OpenAIResponse
 from .const import (
     DOMAIN,
+    ENTITY_ID,
     CONF_ENDPOINT_TYPE,
     CONF_MODEL,
     CONF_PERSONA,
@@ -143,11 +144,11 @@ class OpenAIResponseCustomConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     self.hass,
                     # openai_response,
                     description,
-                    config_entry.entry_id,
+                    ENTITY_ID,
                     **sensor_config
                 ) for description in SENSOR_TYPES
         ]
-        unique_name = f"OpenAI Response Input {config_entry.entry_id}"
+        unique_name = f"OpenAI Response Input {ENTITY_ID}"
         input_text_config = {
             "name": unique_name,
             "state": "",
