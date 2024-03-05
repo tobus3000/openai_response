@@ -23,7 +23,7 @@ from homeassistant.components.sensor import (
     Entity
 )
 from homeassistant.const import CONF_API_KEY, CONF_NAME, CONF_URL
-from . import OpenAIResponse
+from .sensor import OpenAIResponse
 from .const import (
     DOMAIN,
     SIGNAL_EVENTS_CHANGED,

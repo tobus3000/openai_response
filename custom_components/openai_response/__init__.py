@@ -15,7 +15,7 @@ from .const import (
     DEFAULT_TEMPERATURE,
     DEFAULT_MAX_TOKENS
 )
-from .config_flow import OpenAIResponseCustomConfigFlow
+#from .config_flow import OpenAIResponseCustomConfigFlow
 _LOGGER = logging.getLogger(__name__)
 PLATFORMS = [Platform.SENSOR]
 # ENTITY_ID = "openai_response"
