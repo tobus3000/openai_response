@@ -3,7 +3,6 @@ OpenAI Response - Config/Option Flow
 """
 import logging
 from typing import Any, Dict, Optional
-# from openai import OpenAI
 from homeassistant import config_entries
 from homeassistant.const import CONF_API_KEY, CONF_NAME, CONF_URL
 from homeassistant.core import callback
@@ -48,7 +47,6 @@ CUSTOM_LLM_SCHEMA = vol.Schema(
 class OpenAIResponseCustomConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """OpenAI Response custom config flow."""
     VERSION = 1
-    # data: Optional[Dict[str, Any]]
 
     async def async_step_user(self, user_input: Optional[Dict[str, Any]] = None):
         """Invoked when a user initiates a flow via the user interface."""

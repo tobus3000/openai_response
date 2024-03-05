@@ -6,7 +6,7 @@ import logging
 from openai import OpenAI
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
-from homeassistant.const import Platform, STATE_OK
+from homeassistant.const import Platform
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .sensor import OpenAIResponseSensor, SENSOR_TYPES
 from .entities import (
@@ -87,13 +87,13 @@ async def async_setup_entry(
                 **sensor_config
             ) for description in SENSOR_TYPES
     ]
-    unique_name = f"OpenAI Response Input {entry.entry_id}"
-    input_text_config = {
-        "name": unique_name,
-        "state": "",
-        "icon": "mdi:keyboard"
-    }
-    entity_list.append(OpenAIResponseTextInput(input_text_config))
+    # unique_name = f"OpenAI Response Input {entry.entry_id}"
+    # input_text_config = {
+    #     "name": unique_name,
+    #     "state": "",
+    #     "icon": "mdi:keyboard"
+    # }
+    # entity_list.append(OpenAIResponseTextInput(input_text_config))
     async_add_entities(entity_list)
 
 async def options_update_listener(hass: HomeAssistant,config_entry: ConfigEntry) -> None:
