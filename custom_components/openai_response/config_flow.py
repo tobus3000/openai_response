@@ -3,12 +3,15 @@ OpenAI Response - Config/Option Flow
 """
 import logging
 from typing import Any, Dict, Optional
+from openai import OpenAI
 from homeassistant import config_entries
 from homeassistant.const import CONF_API_KEY, CONF_NAME, CONF_URL
 from homeassistant.core import callback
 from homeassistant.helpers.selector import selector
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
+from .sensor import OpenAIResponseSensor, SENSOR_TYPES
+from .entities import OpenAIResponseTextInput, OpenAIResponse
 from .const import (
     DOMAIN,
     CONF_ENDPOINT_TYPE,
@@ -91,6 +94,7 @@ class OpenAIResponseCustomConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             if not errors:
                 cfg_data = self.user_info
                 cfg_data.update(user_input)
+                await self._async_add_entities(cfg_data)
                 return self.async_create_entry(title="OpenAI Response", data=cfg_data)
 
         if self.user_info[CONF_ENDPOINT_TYPE] == "openai":
@@ -107,6 +111,49 @@ class OpenAIResponseCustomConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     def async_get_options_flow(config_entry):
         """Get the options flow for this handler."""
         return OptionsFlowHandler(config_entry)
+
+    @callback
+    async def _async_add_entities(self, config_entry):
+        """Create entities based on user input."""
+        openai_response: OpenAIResponse = self.hass.data[DOMAIN]
+        config = config_entry.as_dict()
+        if config['data'].get('endpoint_type') == "custom":
+            client = OpenAI(
+                base_url=config['data'].get("url"),
+                api_key="nokey"
+            )
+        else:
+            client = OpenAI(
+                base_url=config['data'].get("url"),
+                api_key=config['data'].get("api_key")
+            )
+        sensor_config = {
+            "name": config_entry['data'].get("name"),
+            "client": client,
+            "model": config_entry['data'].get("model"),
+            "persona": config_entry['options'].get("persona", DEFAULT_PERSONA),
+            "temperature": config_entry['options'].get("temperature", DEFAULT_TEMPERATURE),
+            "max_tokens": config_entry['options'].get("max_tokens", DEFAULT_MAX_TOKENS)
+        }
+        entity_list = [
+                OpenAIResponseSensor(
+                    self.hass,
+                    openai_response,
+                    description,
+                    config_entry.entry_id,
+                    **sensor_config
+                ) for description in SENSOR_TYPES
+        ]
+        unique_name = f"OpenAI Response Input {config_entry.entry_id}"
+        input_text_config = {
+            "name": unique_name,
+            "state": "",
+            "icon": "mdi:keyboard"
+        }
+        entity_list.append(OpenAIResponseTextInput(input_text_config))
+        self.hass.async_add_job(self.hass.data[DOMAIN].async_add_entities, [entity_list])
+        # async_add_entities(entity_list)
+
 
 class OptionsFlowHandler(config_entries.OptionsFlow):
     """Handles options flow for the component."""

@@ -3,15 +3,15 @@ OpenAI Response - Custom Component Init File
 """
 # from typing import Any, Dict
 import logging
-from openai import OpenAI
+# from openai import OpenAI
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.const import Platform
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from .sensor import OpenAIResponseSensor, SENSOR_TYPES
+# from homeassistant.helpers.entity_platform import AddEntitiesCallback
+# from .sensor import OpenAIResponseSensor, SENSOR_TYPES
 from .entities import (
-    OpenAIResponse,
-    OpenAIResponseTextInput
+    OpenAIResponse
+    # OpenAIResponseTextInput
 )
 from .const import (
     DOMAIN,
@@ -48,45 +48,46 @@ async def async_setup(hass: HomeAssistant,config: dict) -> bool:
 
 async def async_setup_entry(
     hass: HomeAssistant,
-    entry: ConfigEntry,
-    async_add_entities: AddEntitiesCallback
+    entry: ConfigEntry
+    # async_add_entities: AddEntitiesCallback
 ) -> None:
     """Setup sensors from a config entry created in the integrations UI."""
-    openai_response: OpenAIResponse = hass.data[DOMAIN]
+    # openai_response: OpenAIResponse = hass.data[DOMAIN]
     config = entry.as_dict()
-    if config['data'].get('endpoint_type') == "custom":
-        client = OpenAI(
-            base_url=config['data'].get("url"),
-            api_key="nokey"
-        )
-    else:
-        client = OpenAI(
-            base_url=config['data'].get("url"),
-            api_key=config['data'].get("api_key")
-        )
+    # if config['data'].get('endpoint_type') == "custom":
+    #     client = OpenAI(
+    #         base_url=config['data'].get("url"),
+    #         api_key="nokey"
+    #     )
+    # else:
+    #     client = OpenAI(
+    #         base_url=config['data'].get("url"),
+    #         api_key=config['data'].get("api_key")
+    #     )
 
-    sensor_config = {
-        "name": config['data'].get("name"),
-        "client": client,
-        "model": config['data'].get("model"),
-        "persona": config['options'].get("persona", DEFAULT_PERSONA),
-        "temperature": config['options'].get("temperature", DEFAULT_TEMPERATURE),
-        "max_tokens": config['options'].get("max_tokens", DEFAULT_MAX_TOKENS)
-    }
+    # sensor_config = {
+    #     "name": config['data'].get("name"),
+    #     "client": client,
+    #     "model": config['data'].get("model"),
+    #     "persona": config['options'].get("persona", DEFAULT_PERSONA),
+    #     "temperature": config['options'].get("temperature", DEFAULT_TEMPERATURE),
+    #     "max_tokens": config['options'].get("max_tokens", DEFAULT_MAX_TOKENS)
+    # }
 
     config = hass.data[DOMAIN][entry.entry_id]
     if entry.options:
         config.update(entry.options)
     _LOGGER.debug("OpenAI Response Sensor Config: %s", config)
-    entity_list = [
-            OpenAIResponseSensor(
-                hass,
-                openai_response,
-                description,
-                entry.entry_id,
-                **sensor_config
-            ) for description in SENSOR_TYPES
-    ]
+
+    # entity_list = [
+    #         OpenAIResponseSensor(
+    #             hass,
+    #             openai_response,
+    #             description,
+    #             entry.entry_id,
+    #             **sensor_config
+    #         ) for description in SENSOR_TYPES
+    # ]
     # unique_name = f"OpenAI Response Input {entry.entry_id}"
     # input_text_config = {
     #     "name": unique_name,
@@ -94,7 +95,7 @@ async def async_setup_entry(
     #     "icon": "mdi:keyboard"
     # }
     # entity_list.append(OpenAIResponseTextInput(input_text_config))
-    async_add_entities(entity_list)
+    # async_add_entities(entity_list)
 
 async def options_update_listener(hass: HomeAssistant,config_entry: ConfigEntry) -> None:
     """Handle options update."""
