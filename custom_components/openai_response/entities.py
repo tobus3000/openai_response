@@ -1,3 +1,6 @@
+"""
+OpenAI Response - Entities
+"""
 from homeassistant.components.input_text import InputText
 from homeassistant.helpers.entity import Entity
 from homeassistant.core import CALLBACK_TYPE, Event, HomeAssistant, callback
