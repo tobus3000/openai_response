@@ -110,7 +110,7 @@ class OpenAIResponseSensor(SensorEntity):
     def __init__(
         self,
         hass,
-        openai_response: OpenAIResponse,
+        # openai_response: OpenAIResponse,
         entity_description: OpenAIResponseSensorEntityDescription,
         entry_id: str,
         **kwargs

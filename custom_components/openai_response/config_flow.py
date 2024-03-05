@@ -115,7 +115,7 @@ class OpenAIResponseCustomConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     @callback
     async def _async_add_entities(self, config_entry):
         """Create entities based on user input."""
-        openai_response: OpenAIResponse = self.hass.data[DOMAIN]
+        # openai_response: OpenAIResponse = self.hass.data[DOMAIN]
         config = config_entry.as_dict()
         if config['data'].get('endpoint_type') == "custom":
             client = OpenAI(
@@ -138,7 +138,7 @@ class OpenAIResponseCustomConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         entity_list = [
                 OpenAIResponseSensor(
                     self.hass,
-                    openai_response,
+                    # openai_response,
                     description,
                     config_entry.entry_id,
                     **sensor_config
