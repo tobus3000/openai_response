@@ -4,7 +4,7 @@ OpenAI Response - Entities
 from homeassistant.components.input_text import InputText
 from homeassistant.helpers.entity import Entity
 from homeassistant.core import CALLBACK_TYPE, Event, HomeAssistant, callback
-from homeassistant.const import Platform, EVENT_CORE_CONFIG_UPDATE, STATE_OK
+from homeassistant.const import EVENT_CORE_CONFIG_UPDATE
 from .const import ENTITY_ID
 
 class OpenAIResponse(Entity):
@@ -25,12 +25,11 @@ class OpenAIResponse(Entity):
     @callback
     def update_settings(self, _: Event | None = None, initial: bool = False) -> None:
         """Update settings."""
-        pass
+
 
     @callback
     def remove_listeners(self) -> None:
         """Remove listeners."""
-        pass
         # if self._config_listener:
         #     self._config_listener()
         # if self._update_events_listener:
@@ -46,10 +45,12 @@ class OpenAIResponse(Entity):
 class OpenAIResponseTextInput(InputText):
     """Representation of a custom text input entity."""
 
-    def __init__(self, name):
+    def __init__(self, config: dict):
         """Initialize the text input entity."""
-        self._name = name
-        self._state = None
+        super().__init__(config)
+        self._name = config.get("name")
+        self._state = config.get("state")
+        self._icon = config.get("icon")
 
     @property
     def name(self):
@@ -60,6 +61,11 @@ class OpenAIResponseTextInput(InputText):
     def state(self):
         """Return the current state of the entity."""
         return self._state
+
+    @property
+    def icon(self):
+        """Return the current icon of the entity."""
+        return self._icon
 
     async def async_set_text(self, text):
         """Set the text value."""

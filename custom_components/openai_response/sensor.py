@@ -5,61 +5,64 @@ import logging
 from collections.abc import Callable
 from dataclasses import dataclass
 # from openai import OpenAI
-import voluptuous as vol
 from datetime import datetime
+# import voluptuous as vol
 # from homeassistant.config_entries import ConfigEntry
 # from homeassistant.core import HomeAssistant
 from homeassistant.const import STATE_IDLE, STATE_BUFFERING, STATE_OK, STATE_PROBLEM
-from homeassistant.helpers.device_registry import DeviceEntryType, DeviceInfo
+from homeassistant.helpers.device_registry import (
+    DeviceEntryType,
+    DeviceInfo
+)
 from homeassistant.helpers.typing import StateType
 from homeassistant.helpers.event import async_track_state_change
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
+# import homeassistant.helpers.config_validation as cv
+# from homeassistant.core import callback
 # from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.components.sensor import (
-    PLATFORM_SCHEMA,
-    SensorDeviceClass,
+    # PLATFORM_SCHEMA,
+    # SensorDeviceClass,
     SensorEntity,
     SensorEntityDescription,
-    Entity
+    # Entity
 )
-from homeassistant.const import CONF_API_KEY, CONF_NAME, CONF_URL
+# from homeassistant.const import CONF_API_KEY, CONF_NAME, CONF_URL
 from .entities import OpenAIResponse
 from .const import (
     DOMAIN,
     SIGNAL_EVENTS_CHANGED,
-    CONF_MODEL,
-    CONF_PERSONA,
-    CONF_KEEPHISTORY,
-    CONF_TEMPERATURE,
-    CONF_MAX_TOKENS,
-    DEFAULT_NAME,
-    DEFAULT_MODEL,
-    DEFAULT_PERSONA,
-    DEFAULT_TEMPERATURE,
-    DEFAULT_KEEP_HISTORY,
-    DEFAULT_MAX_TOKENS
-
+    # DEFAULT_API_KEY
+    # CONF_MODEL,
+    # CONF_PERSONA,
+    # CONF_KEEPHISTORY,
+    # CONF_TEMPERATURE,
+    # CONF_MAX_TOKENS,
+    # DEFAULT_NAME,
+    # DEFAULT_MODEL,
+    # DEFAULT_PERSONA,
+    # DEFAULT_TEMPERATURE,
+    # DEFAULT_KEEP_HISTORY,
+    # DEFAULT_MAX_TOKENS
 )
-import homeassistant.helpers.config_validation as cv
-from homeassistant.core import callback
 
 _LOGGER = logging.getLogger(__name__)
-DEFAULT_API_KEY = "nokey"
+# DEFAULT_API_KEY = "nokey"
 DEFAULT_API_BASE = ""
 ENTITY_ID_SENSOR_FORMAT = DOMAIN + ".response_{}"
 
-PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
-    {
-        vol.Optional(CONF_API_KEY, default=DEFAULT_API_KEY): cv.string,
-        vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
-        vol.Optional(CONF_URL, default=DEFAULT_API_BASE): cv.string,
-        vol.Optional(CONF_PERSONA, default=DEFAULT_PERSONA): cv.string,
-        vol.Optional(CONF_KEEPHISTORY, default=DEFAULT_KEEP_HISTORY): cv.boolean,
-        vol.Optional(CONF_TEMPERATURE, default=DEFAULT_TEMPERATURE): cv.positive_float,
-        vol.Optional(CONF_MAX_TOKENS, default=DEFAULT_MAX_TOKENS): cv.positive_int,
-        vol.Optional(CONF_MODEL, default=DEFAULT_MODEL): cv.string,
-    }
-)
+# PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
+#     {
+#         vol.Optional(CONF_API_KEY, default=DEFAULT_API_KEY): cv.string,
+#         vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
+#         vol.Optional(CONF_URL, default=DEFAULT_API_BASE): cv.string,
+#         vol.Optional(CONF_PERSONA, default=DEFAULT_PERSONA): cv.string,
+#         vol.Optional(CONF_KEEPHISTORY, default=DEFAULT_KEEP_HISTORY): cv.boolean,
+#         vol.Optional(CONF_TEMPERATURE, default=DEFAULT_TEMPERATURE): cv.positive_float,
+#         vol.Optional(CONF_MAX_TOKENS, default=DEFAULT_MAX_TOKENS): cv.positive_int,
+#         vol.Optional(CONF_MODEL, default=DEFAULT_MODEL): cv.string,
+#     }
+# )
 
 @dataclass(kw_only=True, frozen=True)
 class OpenAIResponseSensorEntityDescription(SensorEntityDescription):
@@ -73,55 +76,10 @@ SENSOR_TYPES: tuple[OpenAIResponseSensorEntityDescription, ...] = (
         key="hassio_openai",
         #device_class=SensorDeviceClass.TIMESTAMP,
         translation_key="hassio_openai_response",
-        value_fn=lambda data: data._response_text,
+        value_fn=lambda data: data.response_text,
         signal=SIGNAL_EVENTS_CHANGED,
     ),
 )
-
-# async def async_setup_entry(
-#     hass: HomeAssistant,
-#     entry: ConfigEntry,
-#     async_add_entities: AddEntitiesCallback
-# ) -> None:
-#     """Setup sensors from a config entry created in the integrations UI."""
-#     openai_response: OpenAIResponse = hass.data[DOMAIN]
-#     config = entry.as_dict()
-#     if config['data'].get('endpoint_type') == "custom":
-#         client = OpenAI(
-#             base_url=config['data'].get("url"),
-#             api_key="nokey"
-#         )
-#     else:
-#         client = OpenAI(
-#             base_url=config['data'].get("url"),
-#             api_key=config['data'].get("api_key")
-#         )
-
-#     sensor_config = {
-#         "name": config['data'].get("name"),
-#         "client": client,
-#         "model": config['data'].get("model"),
-#         "persona": config['options'].get("persona", DEFAULT_PERSONA),
-#         "temperature": config['options'].get("temperature", DEFAULT_TEMPERATURE),
-#         "max_tokens": config['options'].get("max_tokens", DEFAULT_MAX_TOKENS)
-#     }
-
-#     config = hass.data[DOMAIN][entry.entry_id]
-#     if entry.options:
-#         config.update(entry.options)
-#     _LOGGER.debug("Full OpenAI Sensor Config: %s", config)
-
-#     async_add_entities(
-#         [
-#             OpenAIResponseSensor(
-#                 hass,
-#                 openai_response,
-#                 description,
-#                 entry.entry_id,
-#                 **sensor_config
-#             ) for description in SENSOR_TYPES
-#         ]
-#     )
 
 def generate_openai_response_sync(
         client,
@@ -192,14 +150,19 @@ class OpenAIResponseSensor(SensorEntity):
         return self._name
 
     @property
+    def response_text(self) -> str:
+        """The response_text of the entity."""
+        return self._response_text
+
+    @property
     def available(self) -> bool:
         """Return True if entity is available."""
         return self._available
 
-    @property
-    def state(self) -> str | None:
-        """The entity state."""
-        return self._state
+    # @property
+    # def state(self) -> str | None:
+    #     """The entity state."""
+    #     return self._state
 
     @property
     def extra_state_attributes(self)  -> dict:
@@ -238,11 +201,11 @@ class OpenAIResponseSensor(SensorEntity):
             )
             try:
                 self._response_text = response.choices[0].message.content
-            except:
+            except Exception:
                 self._state = STATE_PROBLEM
             finally:
                 self._state = STATE_OK
-            
+
             _LOGGER.info(self._response_text)
             self.async_write_ha_state()
             if self._keep_history:
@@ -265,4 +228,3 @@ class OpenAIResponseSensor(SensorEntity):
 
     async def async_update(self):
         """Currently unused..."""
-        pass

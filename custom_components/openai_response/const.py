@@ -5,6 +5,7 @@ ENTITY_ID = "openai_response"
 """Default values"""
 DEFAULT_NAME = "hassio_openai_response"
 DEFAULT_MODEL = "gpt-3.5-turbo-instruct"
+DEFAULT_API_KEY = "nokey"
 DEFAULT_PERSONA = "You are a helpful assistant. Your answers are complete but short."
 DEFAULT_KEEP_HISTORY = False
 DEFAULT_TEMPERATURE = 0.9

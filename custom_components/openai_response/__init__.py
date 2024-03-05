@@ -1,29 +1,28 @@
-"""OpenAI Response custom component."""
+"""
+OpenAI Response - Custom Component Init File
+"""
+# from typing import Any, Dict
 import logging
 from openai import OpenAI
-#from homeassistant import config_entries
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import CALLBACK_TYPE, Event, HomeAssistant, callback
+from homeassistant.core import HomeAssistant
 from homeassistant.const import Platform, STATE_OK
-# from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .sensor import OpenAIResponseSensor, SENSOR_TYPES
-from .entities import OpenAIResponse, OpenAIResponseTextInput
+from .entities import (
+    OpenAIResponse,
+    OpenAIResponseTextInput
+)
 from .const import (
     DOMAIN,
     DEFAULT_PERSONA,
     DEFAULT_TEMPERATURE,
     DEFAULT_MAX_TOKENS
 )
-#from .config_flow import OpenAIResponseCustomConfigFlow
 _LOGGER = logging.getLogger(__name__)
 PLATFORMS = [Platform.SENSOR]
-# ENTITY_ID = "openai_response"
 
-async def async_setup(
-        hass: HomeAssistant,
-        config: dict
-    ) -> bool:
+async def async_setup(hass: HomeAssistant,config: dict) -> bool:
     """Set up the OpenAI Response Custom component from yaml configuration."""
     hass.data.setdefault(DOMAIN, config)
     return True
@@ -89,21 +88,19 @@ async def async_setup_entry(
             ) for description in SENSOR_TYPES
     ]
     unique_name = f"OpenAI Response Input {entry.entry_id}"
-    entity_list.append(OpenAIResponseTextInput(unique_name))
+    input_text_config = {
+        "name": unique_name,
+        "state": "",
+        "icon": "mdi:keyboard"
+    }
+    entity_list.append(OpenAIResponseTextInput(input_text_config))
     async_add_entities(entity_list)
 
-async def options_update_listener(
-        hass: HomeAssistant,
-        config_entry: ConfigEntry
-    ):
+async def options_update_listener(hass: HomeAssistant,config_entry: ConfigEntry) -> None:
     """Handle options update."""
     await hass.config_entries.async_reload(config_entry.entry_id)
 
-
-async def async_unload_entry(
-        hass: HomeAssistant,
-        entry: ConfigEntry
-    ) -> bool:
+async def async_unload_entry(hass: HomeAssistant,entry: ConfigEntry) -> bool:
     """Unload a config entry."""
     if unload_ok := await hass.config_entries.async_unload_platforms(entry, PLATFORMS):
         # Remove config entry from domain.
@@ -115,51 +112,15 @@ async def async_unload_entry(
 
     return unload_ok
 
-async def async_get_system_health_info(hass: HomeAssistant):
-    """Return information for the system health panel."""
-    # Define your custom health info here
-    health_info = {}
-    custom_component_info = {}
-    custom_component_info['status'] = STATE_OK
-    health_info['OpenAI Response Sensor'] = custom_component_info
-    return health_info
+# async def async_get_system_health_info(hass: HomeAssistant) -> Dict[str, Any]:
+#     """Return information for the system health panel."""
+#     # Define your custom health info here
+#     health_info = {}
+#     custom_component_info = {}
+#     custom_component_info['status'] = STATE_OK
+#     health_info['OpenAI Response Sensor'] = custom_component_info
+#     return health_info
 
 # async def async_get_options_flow(config_entry):
 #     """Get the options flow for this handler."""
 #     return OpenAIResponseCustomConfigFlow(config_entry)
-
-# class OpenAIResponse(Entity):
-#     """Represents the OpenAI Response component."""
-#     _attr_name = "OpenAI Response"
-#     entity_id = ENTITY_ID
-
-#     def __init__(self, hass: HomeAssistant) -> None:
-#         """Initialize the OpenAIResponse."""
-#         self._hass = hass
-#         self._config_listener: CALLBACK_TYPE | None = None
-#         self._update_events_listener: CALLBACK_TYPE | None = None
-#         self._config_listener = self.hass.bus.async_listen(
-#             EVENT_CORE_CONFIG_UPDATE, self.update_settings
-#         )
-#         self.update_settings(initial=True)
-
-#     @callback
-#     def update_settings(self, _: Event | None = None, initial: bool = False) -> None:
-#         """Update settings."""
-#         pass
-
-#     @callback
-#     def remove_listeners(self) -> None:
-#         """Remove listeners."""
-#         pass
-#         # if self._config_listener:
-#         #     self._config_listener()
-#         # if self._update_events_listener:
-#         #     self._update_events_listener()
-#         # if self._update_sun_position_listener:
-#         #     self._update_sun_position_listener()
-
-#     @property
-#     def state(self) -> str:
-#         """Return state of the component."""
-#         return "Active"

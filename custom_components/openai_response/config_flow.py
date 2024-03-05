@@ -1,6 +1,9 @@
+"""
+OpenAI Response - Config/Option Flow
+"""
 import logging
 from typing import Any, Dict, Optional
-from openai import OpenAI
+# from openai import OpenAI
 from homeassistant import config_entries
 from homeassistant.const import CONF_API_KEY, CONF_NAME, CONF_URL
 from homeassistant.core import callback
@@ -22,6 +25,7 @@ from .const import (
     DEFAULT_KEEP_HISTORY,
     DEFAULT_MAX_TOKENS
 )
+from .validators import validate_openai_auth, validate_custom_llm
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -41,42 +45,10 @@ CUSTOM_LLM_SCHEMA = vol.Schema(
     }
 )
 
-async def validate_openai_auth(api_key: str) -> None:
-    """Validates OpenAI auth.
-
-    Raises a ValueError if the API Key is invalid.
-    """
-    client = OpenAI(api_key=api_key)
-    try:
-        response = client.chat.completions.create(
-            model=DEFAULT_MODEL,
-            messages=[{"role": "system", "content": "This is a connection test."}],
-            max_tokens=5
-        )
-    except Exception as exc:
-        _LOGGER.error(str(exc))
-        raise ValueError from exc
-
-async def validate_custom_llm(base_url: str) -> None:
-    """Validates custom LLM connectivity.
-
-    Raises a ValueError if the machine cannot be reached.
-    """
-    client = OpenAI(base_url=base_url, api_key="nokey")
-    try:
-        response = client.chat.completions.create(
-            model="local-model",
-            messages=[{"role": "system", "content": "This is a connection test."}],
-            max_tokens=5
-        )
-    except Exception as exc:
-        _LOGGER.error(str(exc))
-        raise ValueError from exc
-
 class OpenAIResponseCustomConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """OpenAI Response custom config flow."""
     VERSION = 1
-    data: Optional[Dict[str, Any]]
+    # data: Optional[Dict[str, Any]]
 
     async def async_step_user(self, user_input: Optional[Dict[str, Any]] = None):
         """Invoked when a user initiates a flow via the user interface."""
@@ -104,6 +76,7 @@ class OpenAIResponseCustomConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         )
 
     async def async_step_setup(self, user_input: Optional[Dict[str, Any]] = None):
+        """Second step in setup process where user configures API key or URL."""
         errors: Dict[str, str] = {}
         if user_input is not None:
             if user_input.get(CONF_API_KEY):
