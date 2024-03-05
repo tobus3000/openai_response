@@ -4,11 +4,11 @@ from openai import OpenAI
 #from homeassistant import config_entries
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import CALLBACK_TYPE, Event, HomeAssistant, callback
-from homeassistant.const import Platform, EVENT_CORE_CONFIG_UPDATE, STATE_OK
-from homeassistant.helpers.entity import Entity
+from homeassistant.const import Platform, STATE_OK
+# from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .sensor import OpenAIResponseSensor, SENSOR_TYPES
-from .entities import OpenAIResponseTextInput
+from .entities import OpenAIResponse, OpenAIResponseTextInput
 from .const import (
     DOMAIN,
     DEFAULT_PERSONA,
@@ -18,7 +18,7 @@ from .const import (
 from .config_flow import OpenAIResponseCustomConfigFlow
 _LOGGER = logging.getLogger(__name__)
 PLATFORMS = [Platform.SENSOR]
-ENTITY_ID = "openai_response"
+# ENTITY_ID = "openai_response"
 
 async def async_setup(
         hass: HomeAssistant,
@@ -128,38 +128,38 @@ async def async_get_system_health_info(hass: HomeAssistant):
 #     """Get the options flow for this handler."""
 #     return OpenAIResponseCustomConfigFlow(config_entry)
 
-class OpenAIResponse(Entity):
-    """Represents the OpenAI Response component."""
-    _attr_name = "OpenAI Response"
-    entity_id = ENTITY_ID
+# class OpenAIResponse(Entity):
+#     """Represents the OpenAI Response component."""
+#     _attr_name = "OpenAI Response"
+#     entity_id = ENTITY_ID
 
-    def __init__(self, hass: HomeAssistant) -> None:
-        """Initialize the OpenAIResponse."""
-        self._hass = hass
-        self._config_listener: CALLBACK_TYPE | None = None
-        self._update_events_listener: CALLBACK_TYPE | None = None
-        self._config_listener = self.hass.bus.async_listen(
-            EVENT_CORE_CONFIG_UPDATE, self.update_settings
-        )
-        self.update_settings(initial=True)
+#     def __init__(self, hass: HomeAssistant) -> None:
+#         """Initialize the OpenAIResponse."""
+#         self._hass = hass
+#         self._config_listener: CALLBACK_TYPE | None = None
+#         self._update_events_listener: CALLBACK_TYPE | None = None
+#         self._config_listener = self.hass.bus.async_listen(
+#             EVENT_CORE_CONFIG_UPDATE, self.update_settings
+#         )
+#         self.update_settings(initial=True)
 
-    @callback
-    def update_settings(self, _: Event | None = None, initial: bool = False) -> None:
-        """Update settings."""
-        pass
+#     @callback
+#     def update_settings(self, _: Event | None = None, initial: bool = False) -> None:
+#         """Update settings."""
+#         pass
 
-    @callback
-    def remove_listeners(self) -> None:
-        """Remove listeners."""
-        pass
-        # if self._config_listener:
-        #     self._config_listener()
-        # if self._update_events_listener:
-        #     self._update_events_listener()
-        # if self._update_sun_position_listener:
-        #     self._update_sun_position_listener()
+#     @callback
+#     def remove_listeners(self) -> None:
+#         """Remove listeners."""
+#         pass
+#         # if self._config_listener:
+#         #     self._config_listener()
+#         # if self._update_events_listener:
+#         #     self._update_events_listener()
+#         # if self._update_sun_position_listener:
+#         #     self._update_sun_position_listener()
 
-    @property
-    def state(self) -> str:
-        """Return state of the component."""
-        return "Active"
+#     @property
+#     def state(self) -> str:
+#         """Return state of the component."""
+#         return "Active"

@@ -1,5 +1,6 @@
 """Our domain (namespace) for storing config data in home assistant."""
 DOMAIN = "openai_response"
+ENTITY_ID = "openai_response"
 
 """Default values"""
 DEFAULT_NAME = "hassio_openai_response"
