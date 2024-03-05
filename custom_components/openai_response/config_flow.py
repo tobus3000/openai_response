@@ -116,24 +116,27 @@ class OpenAIResponseCustomConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     async def _async_add_entities(self, config_entry):
         """Create entities based on user input."""
         _LOGGER.debug("OpenAI Config Entry: %s", config_entry)
+
+        # OpenAI Config Entry: {'endpoint_type': 'custom', 'name': 'hassio_openai_response', 'model': 'gpt-3.5-turbo-instruct', 'url': 'http://192.168.50.183:1234/v1'}
+
         # openai_response: OpenAIResponse = self.hass.data[DOMAIN]
-        if config_entry['data'].get('endpoint_type') == "custom":
+        if config_entry.get('endpoint_type') == "custom":
             client = OpenAI(
-                base_url=config_entry['data'].get("url"),
+                base_url=config_entry.get("url"),
                 api_key="nokey"
             )
         else:
             client = OpenAI(
-                base_url=config_entry['data'].get("url"),
-                api_key=config_entry['data'].get("api_key")
+                base_url=config_entry.get("url"),
+                api_key=config_entry.get("api_key")
             )
         sensor_config = {
-            "name": config_entry['data'].get("name"),
+            "name": config_entry.get("name"),
             "client": client,
-            "model": config_entry['data'].get("model"),
-            "persona": config_entry['options'].get("persona", DEFAULT_PERSONA),
-            "temperature": config_entry['options'].get("temperature", DEFAULT_TEMPERATURE),
-            "max_tokens": config_entry['options'].get("max_tokens", DEFAULT_MAX_TOKENS)
+            "model": config_entry.get("model"),
+            "persona": DEFAULT_PERSONA,
+            "temperature": DEFAULT_TEMPERATURE,
+            "max_tokens": DEFAULT_MAX_TOKENS
         }
         entity_list = [
                 OpenAIResponseSensor(
