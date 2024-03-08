@@ -8,6 +8,7 @@ from homeassistant import config_entries
 from homeassistant.const import CONF_API_KEY, CONF_NAME, CONF_URL
 from homeassistant.core import callback
 from homeassistant.helpers.selector import selector
+from homeassistant.helpers.entity_platform import async_add_entities
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
 from .sensor import OpenAIResponseSensor, SENSOR_TYPES
@@ -155,7 +156,7 @@ class OpenAIResponseCustomConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             "icon": "mdi:keyboard"
         }
         entity_list.append(OpenAIResponseTextInput(input_text_config))
-        self.hass.async_add_job(self.hass.data[DOMAIN].async_add_entities, [entity_list])
+        self.hass.async_create_task(async_add_entities(entity_list))
         # async_add_entities(entity_list)
 
 
