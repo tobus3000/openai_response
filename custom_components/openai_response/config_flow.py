@@ -8,7 +8,6 @@ from homeassistant import config_entries
 from homeassistant.const import CONF_API_KEY, CONF_NAME, CONF_URL
 from homeassistant.core import callback
 from homeassistant.helpers.selector import selector
-from homeassistant.helpers.entity_platform import async_add_entities
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
 from .sensor import OpenAIResponseSensor, SENSOR_TYPES
@@ -96,7 +95,6 @@ class OpenAIResponseCustomConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             if not errors:
                 cfg_data = self.user_info
                 cfg_data.update(user_input)
-                await self._async_add_entities(cfg_data)
                 return self.async_create_entry(title="OpenAI Response", data=cfg_data)
 
         if self.user_info[CONF_ENDPOINT_TYPE] == "openai":
@@ -114,49 +112,50 @@ class OpenAIResponseCustomConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         """Get the options flow for this handler."""
         return OptionsFlowHandler(config_entry)
 
-    @callback
-    async def _async_add_entities(self, config_entry):
-        """Create entities based on user input."""
-        _LOGGER.debug("OpenAI Config Entry: %s", config_entry)
+    
+    # async def _build_entity_list(self, config_entry):
+    #     """Create entities based on user input."""
+    #     _LOGGER.debug("OpenAI Config Entry: %s", config_entry)
 
-        # OpenAI Config Entry: {'endpoint_type': 'custom', 'name': 'hassio_openai_response', 'model': 'gpt-3.5-turbo-instruct', 'url': 'http://192.168.50.183:1234/v1'}
+    #     # OpenAI Config Entry: {'endpoint_type': 'custom', 'name': 'hassio_openai_response', 'model': 'gpt-3.5-turbo-instruct', 'url': 'http://192.168.50.183:1234/v1'}
 
-        # openai_response: OpenAIResponse = self.hass.data[DOMAIN]
-        if config_entry.get('endpoint_type') == "custom":
-            client = OpenAI(
-                base_url=config_entry.get("url"),
-                api_key="nokey"
-            )
-        else:
-            client = OpenAI(
-                base_url=config_entry.get("url"),
-                api_key=config_entry.get("api_key")
-            )
-        sensor_config = {
-            "name": config_entry.get("name"),
-            "client": client,
-            "model": config_entry.get("model"),
-            "persona": DEFAULT_PERSONA,
-            "temperature": DEFAULT_TEMPERATURE,
-            "max_tokens": DEFAULT_MAX_TOKENS
-        }
-        entity_list = [
-                OpenAIResponseSensor(
-                    self.hass,
-                    # openai_response,
-                    description,
-                    ENTITY_ID,
-                    **sensor_config
-                ) for description in SENSOR_TYPES
-        ]
-        unique_name = f"OpenAI Response Input {ENTITY_ID}"
-        input_text_config = {
-            "name": unique_name,
-            "state": "",
-            "icon": "mdi:keyboard"
-        }
-        entity_list.append(OpenAIResponseTextInput(input_text_config))
-        self.hass.async_create_task(async_add_entities(entity_list))
+    #     # openai_response: OpenAIResponse = self.hass.data[DOMAIN]
+    #     if config_entry.get('endpoint_type') == "custom":
+    #         client = OpenAI(
+    #             base_url=config_entry.get("url"),
+    #             api_key="nokey"
+    #         )
+    #     else:
+    #         client = OpenAI(
+    #             base_url=config_entry.get("url"),
+    #             api_key=config_entry.get("api_key")
+    #         )
+    #     sensor_config = {
+    #         "name": config_entry.get("name"),
+    #         "client": client,
+    #         "model": config_entry.get("model"),
+    #         "persona": DEFAULT_PERSONA,
+    #         "temperature": DEFAULT_TEMPERATURE,
+    #         "max_tokens": DEFAULT_MAX_TOKENS
+    #     }
+    #     entity_list = [
+    #             OpenAIResponseSensor(
+    #                 self.hass,
+    #                 # openai_response,
+    #                 description,
+    #                 ENTITY_ID,
+    #                 **sensor_config
+    #             ) for description in SENSOR_TYPES
+    #     ]
+    #     unique_name = f"OpenAI Response Input {ENTITY_ID}"
+    #     input_text_config = {
+    #         "name": unique_name,
+    #         "state": "",
+    #         "icon": "mdi:keyboard"
+    #     }
+    #     entity_list.append(OpenAIResponseTextInput(input_text_config))
+    #     return entity_list
+        #self.hass.async_create_task(async_add_entities(entity_list))
         # async_add_entities(entity_list)
 
 
