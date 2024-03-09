@@ -23,7 +23,7 @@ _LOGGER = logging.getLogger(__name__)
 PLATFORMS = [Platform.SENSOR]
 
 async def async_setup(hass: HomeAssistant,config: dict) -> bool:
-    """Set up the OpenAI Response Custom component from yaml configuration."""
+    """Set up is called when Home Assistant is loading our component."""
     hass.data.setdefault(DOMAIN, config)
     return True
 
