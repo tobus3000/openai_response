@@ -3,9 +3,8 @@
     "name": "OpenAI Response",
     "documentation": "https://github.com/Hassassistant/openai_response",
     "dependencies": [],
-    "codeowners": ["@hassassistant"],
+    "codeowners": ["@hassassistant","@tobus3000"],
     "requirements": ["openai>=1.12.0"],
-    "extra_quality_scale": "platinum",
     "version": "0.1.1",
     "config_flow": true
 }

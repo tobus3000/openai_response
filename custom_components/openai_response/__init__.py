@@ -48,8 +48,8 @@ async def async_setup(hass: HomeAssistant,config: dict) -> bool:
 
 async def async_setup_entry(
     hass: HomeAssistant,
-    entry: ConfigEntry,
-    async_add_entities: AddEntitiesCallback
+    entry: ConfigEntry
+    # async_add_entities: AddEntitiesCallback
 ) -> None:
     """Setup sensors from a config entry created in the integrations UI."""
     # openai_response: OpenAIResponse = hass.data[DOMAIN]
